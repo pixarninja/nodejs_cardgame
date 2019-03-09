@@ -6,6 +6,7 @@ var webSocketsServerPort = 8080;
 // websocket and http servers
 var webSocketServer = require('websocket').server;
 var http = require('http');
+var fs = require('fs');
 var counter = 0;
 /**
  * Global variables
@@ -33,20 +34,20 @@ var server = http.createServer(function(request, response) {
   // Not important for us. We're writing WebSocket server,
   // not HTTP server
   counter++;
-  console.log("Request: " + req.url + " (" + counter + ")");
+  console.log("Request: " + request.url + " (" + counter + ")");
 
-  if(req.url == "/app.html") {
+  if(request.url == "/app.html") {
 
     fs.readFile("app.html", function(err, text){
-      res.setHeader("Content-Type", "text/html");
-      res.end(text);
+      response.setHeader("Content-Type", "text/html");
+      response.end(text);
     });
     return;
 
   }
 
-  res.setHeader("Content-Type", "text/html");
-  res.end("<p>Hello World. Request counter: " + counter + ".</p>");
+  response.setHeader("Content-Type", "text/html");
+  response.end("<p>Hello World. Request counter: " + counter + ".</p>");
 });
 server.listen(webSocketsServerPort, function() {
   console.log((new Date()) + " Server is listening on port "
