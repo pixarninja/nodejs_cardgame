@@ -6,6 +6,7 @@ var webSocketsServerPort = 8080;
 // websocket and http servers
 var webSocketServer = require('websocket').server;
 var http = require('http');
+var counter = 0;
 /**
  * Global variables
  */
