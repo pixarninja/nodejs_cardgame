@@ -1,104 +1,104 @@
 "use strict";
-// Optional. You will see this name in eg. 'ps' or 'top' command
-process.title = 'node-chat';
-// Port where we'll run the websocket server
+
+// Process title.
+process.title = 'node-cardgame';
+
+// Port where we'll run the websocket server.
 var webSocketsServerPort = 8080;
-// websocket and http servers
+
+// Websocket and http servers.
 var webSocketServer = require('websocket').server;
 var http = require('http');
 var fs = require('fs');
 var counter = 0;
-/**
- * Global variables
- */
-// latest 100 messages
+
+// List of previous data.
 var history = [ ];
-// list of currently connected clients (users)
+// List of currently connected clients.
 var clients = [ ];
-/**
- * Helper function for escaping input strings
- */
+
+// Input string helper function.
 function htmlEntities(str) {
   return String(str)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;')
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
-// Array with some colors
+
+// Array with some colors in random order.
 var colors = [ 'red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange' ];
-// ... in random order
 colors.sort(function(a,b) { return Math.random() > 0.5; } );
-/**
- * HTTP server
- */
+
+// HTTP server setup.
 var server = http.createServer(function(request, response) {
   // Not important for us. We're writing WebSocket server,
-  // not HTTP server
+  // not HTTP server.
+
   counter++;
   console.log("Request: " + request.url + " (" + counter + ")");
 
+  // Serve app.html base webpage to client.
   if(request.url == "/app.html") {
-
     fs.readFile("app.html", function(err, text){
-      response.setHeader("Content-Type", "text/html");
+      //response.setHeader("Content-Type", "text/html");
       response.end(text);
     });
     return;
+  }
 
+  // Serve frontent.js to client.
+  if(request.url == "/frontend.js") {
+    fs.readFile("frontend.js", function(err, text){
+      response.end(text);
+    });
+    return;
   }
 
   response.setHeader("Content-Type", "text/html");
   response.end("<p>Hello World. Request counter: " + counter + ".</p>");
 });
+
+// Start HTTP server.
 server.listen(webSocketsServerPort, function() {
-  console.log((new Date()) + " Server is listening on port "
-      + webSocketsServerPort);
+  console.log((new Date()) + " Server is listening on port " + webSocketsServerPort);
 });
-/**
- * WebSocket server
- */
+
+// WebSocket server.
 var wsServer = new webSocketServer({
-  // WebSocket server is tied to a HTTP server. WebSocket
-  // request is just an enhanced HTTP request. For more info 
-  // http://tools.ietf.org/html/rfc6455#page-6
   httpServer: server
 });
-// This callback function is called every time someone
-// tries to connect to the WebSocket server
+
+// WebSocket callback.
 wsServer.on('request', function(request) {
-  console.log((new Date()) + ' Connection from origin '
-      + request.origin + '.');
-  // accept connection - you should check 'request.origin' to
-  // make sure that client is connecting from your website
-  // (http://en.wikipedia.org/wiki/Same_origin_policy)
-  var connection = request.accept(null, request.origin); 
-  // we need to know client index to remove them on 'close' event
+  console.log((new Date()) + ' Connection from origin ' + request.origin + '.');
+  // Possibly check 'request.origin' to make sure that client is connecting from correct website.
+  // (more info at: http://en.wikipedia.org/wiki/Same_origin_policy).
+  var connection = request.accept(null, request.origin);
+
+  // Initialize client variables.
   var index = clients.push(connection) - 1;
   var userName = false;
   var userColor = false;
   console.log((new Date()) + ' Connection accepted.');
-  // send back chat history
+
+  // Send back chat history as JSON.
   if (history.length > 0) {
     connection.sendUTF(
         JSON.stringify({ type: 'history', data: history} ));
   }
-  // user sent some message
+
+  // Send message callback.
   connection.on('message', function(message) {
-    if (message.type === 'utf8') { // accept only text
-    // first message sent by user is their name
+    if (message.type === 'utf8') {
      if (userName === false) {
-        // remember user name
+        // Store username and color
         userName = htmlEntities(message.utf8Data);
-        // get random color and send it back to the user
         userColor = colors.shift();
-        connection.sendUTF(
-            JSON.stringify({ type:'color', data: userColor }));
-        console.log((new Date()) + ' User is known as: ' + userName
-                    + ' with ' + userColor + ' color.');
+        connection.sendUTF(JSON.stringify({ type:'color', data: userColor }));
+        console.log((new Date()) + ' User is known as: ' + userName + ' with ' + userColor + ' color.');
       } else { // log and broadcast the message
-        console.log((new Date()) + ' Received Message from '
-                    + userName + ': ' + message.utf8Data);
+        console.log((new Date()) + ' Received Message from ' + userName + ': ' + message.utf8Data);
         
-        // we want to keep history of all sent messages
+        // Update history list.
         var obj = {
           time: (new Date()).getTime(),
           text: htmlEntities(message.utf8Data),
@@ -107,7 +107,8 @@ wsServer.on('request', function(request) {
         };
         history.push(obj);
         history = history.slice(-100);
-        // broadcast message to all connected clients
+
+        // Broadcast message to all connected clients.
         var json = JSON.stringify({ type:'message', data: obj });
         for (var i=0; i < clients.length; i++) {
           clients[i].sendUTF(json);
@@ -115,14 +116,12 @@ wsServer.on('request', function(request) {
       }
     }
   });
-  // user disconnected
+
+  // Client disconnect callback.
   connection.on('close', function(connection) {
     if (userName !== false && userColor !== false) {
-      console.log((new Date()) + " Peer "
-          + connection.remoteAddress + " disconnected.");
-      // remove user from the list of connected clients
+      console.log((new Date()) + " Peer " + connection.remoteAddress + " disconnected.");
       clients.splice(index, 1);
-      // push back user's color to be reused by another user
       colors.push(userColor);
     }
   });

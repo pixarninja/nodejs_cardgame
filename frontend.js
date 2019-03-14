@@ -1,15 +1,19 @@
 $(function () {
   "use strict";
+
   // for better performance - to avoid searching in DOM
   var content = $('#content');
   var input = $('#input');
   var status = $('#status');
+
   // my color assigned by the server
   var myColor = false;
   // my name sent to the server
   var myName = false;
+
   // if user is running mozilla then use it's built-in WebSocket
   window.WebSocket = window.WebSocket || window.MozWebSocket;
+
   // if browser doesn't support WebSocket, just show
   // some notification and exit
   if (!window.WebSocket) {
@@ -20,13 +24,16 @@ $(function () {
     $('span').hide();
     return;
   }
+
   // open connection
-  var connection = new WebSocket('ws://127.0.0.1:8080');
+  var connection = new WebSocket('ws://34.207.209.71:8080');
+
   connection.onopen = function () {
     // first we want users to enter their names
     input.removeAttr('disabled');
     status.text('Choose name:');
   };
+
   connection.onerror = function (error) {
     // just in there were some problems with connection...
     content.html($('<p>', {
@@ -34,6 +41,7 @@ $(function () {
          + 'connection or the server is down.'
     }));
   };
+
   // most important part - incoming messages
   connection.onmessage = function (message) {
     // try to parse JSON message. Because we know that the server
@@ -46,6 +54,7 @@ $(function () {
       console.log('Invalid JSON: ', message.data);
       return;
     }
+
     // NOTE: if you're not sure about the JSON structure
     // check the server source code above
     // first response from the server with user's color
@@ -69,6 +78,7 @@ $(function () {
       console.log('Hmm..., I\'ve never seen JSON like this:', json);
     }
   };
+
   /**
    * Send message when user presses Enter key
    */
@@ -84,12 +94,14 @@ $(function () {
       // disable the input field to make the user wait until server
       // sends back response
       input.attr('disabled', 'disabled');
+
       // we know that the first message sent from a user their name
       if (myName === false) {
         myName = msg;
       }
     }
   });
+
   /**
    * This method is optional. If the server wasn't able to
    * respond to the in 3 seconds then show some error message 
@@ -102,6 +114,7 @@ $(function () {
           'Unable to communicate with the WebSocket server.');
     }
   }, 3000);
+
   /**
    * Add message to the chat window
    */
