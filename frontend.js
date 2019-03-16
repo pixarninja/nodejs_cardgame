@@ -1,86 +1,91 @@
 $(function () {
   "use strict";
 
-  // for better performance - to avoid searching in DOM
-  var content = $('#content');
-  var input = $('#input');
-  var status = $('#status');
+  // To avoid searching in DOM.
+  var content = $("#content");
+  var input = $("#input");
+  var status = $("#status");
 
-  // my color assigned by the server
+  // IP address of the server.
+  var serverIP = "54.167.62.240";
+  // Color assigned by the server.
   var myColor = false;
-  // my name sent to the server
+  // Name sent to the server.
   var myName = false;
 
-  // if user is running mozilla then use it's built-in WebSocket
   window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-  // if browser doesn't support WebSocket, just show
-  // some notification and exit
+  // If browser doesn"t support WebSocket, notify and exit.
   if (!window.WebSocket) {
-    content.html($('<p>',
-      { text:'Sorry, but your browser doesn\'t support WebSocket.'}
+    content.html($("<p>",
+      { text:"Sorry, but your browser doesn\'t support WebSocket."}
     ));
     input.hide();
-    $('span').hide();
+    $("span").hide();
     return;
   }
 
-  // open connection
-  var connection = new WebSocket('ws://34.207.209.71:8080');
+  // Open the connection to the server.
+  var connection = new WebSocket("ws://" + serverIP + ":8080");
 
+  /* 
+   * Functionality for a user that just joined.
+   */ 
   connection.onopen = function () {
-    // first we want users to enter their names
-    input.removeAttr('disabled');
-    status.text('Choose name:');
+    input.removeAttr("disabled");
+    status.text("Choose name:");
   };
 
+  /*
+   * Functionality when server returns an error.
+   * @param error, the error from the server.
+   */
   connection.onerror = function (error) {
-    // just in there were some problems with connection...
-    content.html($('<p>', {
-      text: 'Sorry, but there\'s some problem with your '
-         + 'connection or the server is down.'
+    content.html($("<p>", {
+      text: "Sorry, but there\'s some problem with your "
+         + "connection or the server is down. Error: " + error
     }));
   };
 
-  // most important part - incoming messages
+  /*
+   * Functionality when receiving a message.
+   * @param message, the JSON message received.
+   */
   connection.onmessage = function (message) {
-    // try to parse JSON message. Because we know that the server
-    // always returns JSON this should work without any problem but
-    // we should make sure that the massage is not chunked or
-    // otherwise damaged.
     try {
       var json = JSON.parse(message.data);
     } catch (e) {
-      console.log('Invalid JSON: ', message.data);
+      console.log("Invalid JSON ERROR: ", message.data);
       return;
     }
 
-    // NOTE: if you're not sure about the JSON structure
-    // check the server source code above
-    // first response from the server with user's color
-    if (json.type === 'color') { 
+    // First response from server.
+    if (json.type === "color") { 
       myColor = json.data;
-      status.text(myName + ': ').css('color', myColor);
-      input.removeAttr('disabled').focus();
-      // from now user can start sending messages
-    } else if (json.type === 'history') { // entire message history
-      // insert every single message to the chat window
-      for (var i=0; i < json.data.length; i++) {
+      status.text(myName + ": ").css("color", myColor);
+      input.removeAttr("disabled").focus();
+    }
+    // Entire message history.
+    else if (json.type === "history") {
+      for (var i = 0; i < json.data.length; i++) {
       addMessage(json.data[i].author, json.data[i].text,
           json.data[i].color, new Date(json.data[i].time));
       }
-    } else if (json.type === 'message') { // it's a single message
-      // let the user write another message
-      input.removeAttr('disabled'); 
+    }
+    // Single message.
+    else if (json.type === "message") {
+      input.removeAttr("disabled"); 
       addMessage(json.data.author, json.data.text,
-                 json.data.color, new Date(json.data.time));
-    } else {
-      console.log('Hmm..., I\'ve never seen JSON like this:', json);
+          json.data.color, new Date(json.data.time));
+    }
+    else {
+      console.log("JSON Type ERROR: ", json);
     }
   };
 
-  /**
-   * Send message when user presses Enter key
+  /*
+   * Send message when user presses Enter key.
+   * @param e, the key code pressed.
    */
   input.keydown(function(e) {
     if (e.keyCode === 13) {
@@ -88,42 +93,45 @@ $(function () {
       if (!msg) {
         return;
       }
-      // send the message as an ordinary text
-      connection.send(msg);
-      $(this).val('');
-      // disable the input field to make the user wait until server
-      // sends back response
-      input.attr('disabled', 'disabled');
 
-      // we know that the first message sent from a user their name
+      // Send the message as text.
+      connection.send(msg);
+      $(this).val("");
+
+      // Disable the input field and wait for response of server.
+      input.attr("disabled", "disabled");
+
       if (myName === false) {
         myName = msg;
       }
     }
   });
 
-  /**
-   * This method is optional. If the server wasn't able to
-   * respond to the in 3 seconds then show some error message 
-   * to notify the user that something is wrong.
+  /* 
+   * Notify user if a connection is unable to be made within 3 seconds.
    */
   setInterval(function() {
     if (connection.readyState !== 1) {
-      status.text('Error');
-      input.attr('disabled', 'disabled').val(
-          'Unable to communicate with the WebSocket server.');
+      status.text("Error");
+      input.attr("disabled", "disabled").val(
+          "Unable to communicate with the WebSocket server.");
     }
   }, 3000);
 
-  /**
-   * Add message to the chat window
+  /* Add message to the chat window.
+   * @param author, the author of the message.
+   * @param message, the message text.
+   * @param color, the message color.
+   * @param dt, the time of the message.
    */
   function addMessage(author, message, color, dt) {
-    content.prepend('<p><span style="color:' + color + '">'
-        + author + '</span> @ ' + (dt.getHours() < 10 ? '0'
-        + dt.getHours() : dt.getHours()) + ':'
-        + (dt.getMinutes() < 10
-          ? '0' + dt.getMinutes() : dt.getMinutes())
-        + ': ' + message + '</p>');
+    content.prepend(
+        "<p>" +
+          "(" + (dt.getHours() < 10 ? "0" + dt.getHours() : dt.getHours()) +
+          ":" + (dt.getMinutes() < 10 ? "0" + dt.getMinutes() : dt.getMinutes()) +
+          ") " +
+          "<span style='color:" + color + "'>" + author + "</span>" +
+          ": " + message +
+        "</p>");
   }
 });
