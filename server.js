@@ -43,8 +43,20 @@ var server = http.createServer(function(request, response) {
     });
     return;
   }
-  else if(request.url == "/playmat.html") {
+  else if(request.url == "/playmat.html" || request.url === "/playmat.html?") {
     fs.readFile("playmat.html", function(err, text){
+      response.end(text);
+    });
+    return;
+  }
+  else if(request.url == "/header.html" || request.url == "/header.html?") {
+    fs.readFile("header.html", function(err, text){
+      response.end(text);
+    });
+    return;
+  }
+  else if(request.url == "/footer.html") {
+    fs.readFile("footer.html", function(err, text){
       response.end(text);
     });
     return;
@@ -52,6 +64,12 @@ var server = http.createServer(function(request, response) {
   // Serve JavaScript to client.
   else if(request.url == "/frontend.js") {
     fs.readFile("frontend.js", function(err, text){
+      response.end(text);
+    });
+    return;
+  }
+  else if(request.url == "/load-shared.js") {
+    fs.readFile("load-shared.js", function(err, text){
       response.end(text);
     });
     return;
@@ -64,6 +82,26 @@ var server = http.createServer(function(request, response) {
   }
   else if(request.url == "/jquery.js") {
     fs.readFile("jquery.js", function(err, text){
+      response.end(text);
+    });
+    return;
+  }
+  // Serve CSS to client.
+  else if(request.url == "/css/main.css") {
+    fs.readFile("css/main.css", function(err, text){
+      response.end(text);
+    });
+    return;
+  }
+  else if(request.url == "/css/bootstrap.min.css") {
+    fs.readFile("css/bootstrap.min.css", function(err, text){
+      response.end(text);
+    });
+    return;
+  }
+  // Serve images to client.
+  else if(request.url == "/images/wallart.jpg") {
+    fs.readFile("images/wallart.jpg", function(err, text){
       response.end(text);
     });
     return;
