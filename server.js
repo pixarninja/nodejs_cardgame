@@ -36,18 +36,34 @@ var server = http.createServer(function(request, response) {
   counter++;
   console.log("Request: " + request.url + " (" + counter + ")");
 
-  // Serve app.html base webpage to client.
+  // Serve HTML to client.
   if(request.url == "/app.html") {
     fs.readFile("app.html", function(err, text){
-      //response.setHeader("Content-Type", "text/html");
       response.end(text);
     });
     return;
   }
-
-  // Serve frontent.js to client.
-  if(request.url == "/frontend.js") {
+  else if(request.url == "/playmat.html") {
+    fs.readFile("playmat.html", function(err, text){
+      response.end(text);
+    });
+    return;
+  }
+  // Serve JavaScript to client.
+  else if(request.url == "/frontend.js") {
     fs.readFile("frontend.js", function(err, text){
+      response.end(text);
+    });
+    return;
+  }
+  else if(request.url == "/bootstrap.min.js") {
+    fs.readFile("bootstrap.min.js", function(err, text){
+      response.end(text);
+    });
+    return;
+  }
+  else if(request.url == "/jquery.js") {
+    fs.readFile("jquery.js", function(err, text){
       response.end(text);
     });
     return;

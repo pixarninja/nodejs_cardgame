@@ -7,7 +7,7 @@ $(function () {
   var status = $("#status");
 
   // IP address of the server.
-  var serverIP = "54.167.62.240";
+  var serverIP = "54.174.152.202";
   // Color assigned by the server.
   var myColor = false;
   // Name sent to the server.
