@@ -25,9 +25,6 @@ function htmlEntities(str) {
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// Array with some colors in random order.
-var colors = [ 'red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange' ];
-colors.sort(function(a,b) { return Math.random() > 0.5; } );
 
 // HTTP server setup.
 var server = http.createServer(function(request, response) {
@@ -63,8 +60,8 @@ var server = http.createServer(function(request, response) {
     return;
   }
   // Serve JavaScript to client.
-  else if(request.url == "/frontend.js") {
-    fs.readFile("frontend.js", function(err, text){
+  else if(request.url == "/chat.js") {
+    fs.readFile("chat.js", function(err, text){
       response.end(text);
     });
     return;
@@ -157,12 +154,10 @@ wsServer.on('request', function(request) {
   connection.on('message', function(message) {
     if (message.type === 'utf8') {
      if (userName === false) {
-        // Store username and color
+        // Store username
         //userName = htmlEntities(message.utf8Data);
         userName = "TODO";
-        userColor = colors.shift();
-        connection.sendUTF(JSON.stringify({ type:'color', data: userColor }));
-        console.log((new Date()) + ' User is known as: ' + userName + ' with ' + userColor + ' color.');
+        console.log((new Date()) + ' User is known as: ' + userName);
 
         // Update history list.
         var obj = {
@@ -170,7 +165,6 @@ wsServer.on('request', function(request) {
           //text: htmlEntities(message.utf8Data),
           text: message.utf8Data,
           author: userName,
-          color: userColor
         };
         history.push(obj);
         history = history.slice(-100);
@@ -191,7 +185,6 @@ wsServer.on('request', function(request) {
           //text: htmlEntities(message.utf8Data),
           text: message.utf8Data,
           author: userName,
-          color: userColor
         };
         history.push(obj);
         history = history.slice(-100);
@@ -207,10 +200,9 @@ wsServer.on('request', function(request) {
 
   // Client disconnect callback.
   connection.on('close', function(connection) {
-    if (userName !== false && userColor !== false) {
+    if (userName !== false) {
       console.log((new Date()) + " Peer " + connection.remoteAddress + " disconnected.");
       clients.splice(index, 1);
-      colors.push(userColor);
     }
   });
 });

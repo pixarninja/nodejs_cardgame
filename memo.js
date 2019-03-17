@@ -2,6 +2,7 @@ $(function () {
   "use strict";
 
   // To avoid searching in DOM.
+  var content = $("#chat-history");
   var input = $("#input-field-bar");
   var status = $("#status");
 
@@ -9,14 +10,15 @@ $(function () {
   var serverIP = "54.174.152.202";
   // Port of the socket.
   var socketPort = "1337";
+  // Last messages stored.
+  var lastMessages = [];
 
   window.WebSocket = window.WebSocket || window.MozWebSocket;
 
   // If browser doesn't support WebSocket, notify and exit.
   if (!window.WebSocket) {
-    status.text("Sorry, but your browser doesn\'t support WebSocket.");
-    input.attr("disabled", "disabled");
-    input.placeholder = "Unable to display message.";
+    content.text(wrapMessage("Sorry, but your browser doesn\'t support WebSocket.", "Server"));
+    input.hide();
     return;
   }
 
@@ -38,8 +40,8 @@ $(function () {
   connection.onerror = function (error) {
     console.log("Error: " + error);
     status.text("Error: There\'s a problem with your connection or the server is down.);");
-    input.attr("disabled", "disabled");
-    input.placeholder = "Unable to display message.";
+    content.text("");
+    input.hide();
   };
 
   /*
@@ -54,26 +56,94 @@ $(function () {
       return;
     }
 
-    if(json.type === "color") {
-      // Don't need to handle this for memo.js.
+    // Last 3 messages from history.
+    if(json.type === "history") {
+      // Clear previous messages.
+      content.html("");
+
+      // Load messages.
+      var offset = 3;
+      if(json.data.length < 3) {
+        offset = json.data.length;
+      }
+      for(var i = json.data.length - offset; i < json.data.length; i++) {
+        if(i < 0) {
+          continue;
+        }
+        lastMessages[i - (json.data.length - offset)] = prepareMessage(json.data[i].author, json.data[i].text, new Date(json.data[i].time));
+      }
+      if(lastMessages.length < 3 && lastMessages.length > 0) {
+        if(lastMessages.length === 1) {
+          addMessage(lastMessages[0] + "<br>");
+        }
+        else {
+          message = "<span id='opacity-level-2'>" +
+              lastMessages[0] + "</span><br>";
+          addMessage(message);
+          addMessage(lastMessages[1] + "<br>");
+        }
+      }
+      else {
+        for(var i = 0; i < lastMessages.length - 1; i++) {
+          message = "<span id='opacity-level-" + (i + offset) + "'>" +
+              lastMessages[i] + "</span><br>";
+          addMessage(message);
+        }
+        if(lastMessages.length > 0) {
+          addMessage(lastMessages[lastMessages.length - 1] + "<br>");
+        }
+      }
       status.text("");
       input.removeAttr("disabled");
     }
-    // Entire message history.
-    else if(json.type === "history") {
-      var i = json.data.length - 1;
-      addMessage(json.data[i].author, json.data[i].text, json.data[i].color, new Date(json.data[i].time));
-      status.text("");
-      input.removeAttr("disabled");
-    }
+
     // Single message.
     else if(json.type === "message") {
-      addMessage(json.data.author, json.data.text, json.data.color, new Date(json.data.time));
+      // Clear previous messages.
+      content.html("");
+
+      // Load messages.
+      if(lastMessages.length < 3) {
+        if(lastMessages.length === 1) {
+          addMessage(lastMessages[0] + "<br>");
+        }
+        else {
+          message = "<span id='opacity-level-2'>" +
+              lastMessages[0] + "</span><br>";
+          addMessage(message);
+          addMessage(lastMessages[1] + "<br>");
+        }
+      }
+      else {
+        for(var i = 1; i < lastMessages.length; i++) {
+          if(i > 2) {
+            break;
+          }
+          message = "<span id='opacity-level-" + i + "'>" +
+              lastMessages[i] + "</span><br>";
+          addMessage(message);
+        }
+        // Erase first message from lastMessages.
+        for(var i = 1; i < lastMessages.length; i++) {
+          if(i > 2) {
+            break;
+          }
+          lastMessages[i - 1] = lastMessages[i];
+        }
+      }
+
+      // Store new message.
+      lastMessages[lastMessages.length - 1] = prepareMessage(json.data.author, json.data.text, new Date(json.data.time));
+
+      // Add new message.
+      addMessage(lastMessages[lastMessages.length - 1] + "<br>");
+
       status.text("");
       input.removeAttr("disabled");
     }
     else {
       console.log("JSON Type ERROR: ", json);
+      content.text("");
       status.text("Error: Encountered error in JSON.");
       input.removeAttr("disabled");
     }
@@ -104,25 +174,40 @@ $(function () {
    */
   setInterval(function() {
     if (connection.readyState !== 1) {
+      content.text("");
       status.text("Error: Unable to communicate with the WebSocket server.");
-      input.attr("disabled", "disabled");
-      input.placeholder = "Unable to display message.";
+      input.hide();
     }
   }, 3000);
 
-  /* Add message to the chat window.
+  /* 
+   * Add message to the chat window text.
+   * @param message, the message text.
+   */
+  function addMessage(message) {
+    content.html(content.html() + message);
+  }
+
+  /* 
+   * Prepare message to add to the chat window.
    * @param author, the author of the message.
    * @param message, the message text.
-   * @param color, the message color.
    * @param dt, the time of the message.
    */
-  function addMessage(author, message, color, dt) {
-    console.log("addMessage() called!");
-    document.getElementById("input-field-bar").placeholder =
-        "(" + (dt.getHours() < 10 ? "0" + dt.getHours() : dt.getHours()) +
+  function prepareMessage(author, message, dt) {
+    return(
+        "(@" + (dt.getHours() < 10 ? "0" + dt.getHours() : dt.getHours()) +
         ":" + (dt.getMinutes() < 10 ? "0" + dt.getMinutes() : dt.getMinutes()) +
         ") " +
-        author + ": " + message +
-        "       (Use this textbox to reply or go to Chat)";
+        wrapMessage(message, author) + "<br>");
+  }
+
+  /* 
+   * Return a message wrapped by the global header and footer strings.
+   * @param message, the message to be wrapped.
+   * @param author, the author of the message.
+   */
+  function wrapMessage(message, author) {
+    return "<span style='color: #758fff'>" + author + "</span>: <em>" + message + "</em>";
   }
 });
