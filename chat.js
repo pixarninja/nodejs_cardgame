@@ -10,10 +10,14 @@ $(function () {
   var serverIP = "54.174.152.202";
   // Port of the socket.
   var socketPort = "1337";
-  // Color assigned by the server.
-  var myColor = false;
   // Name sent to the server.
   var myName = false;
+  // Welcome message (first message displayed).
+  var welcomeMessage = "Currently there are no active message channels. Use the textbox below to start chatting!";
+  // Last recorded message.
+  var message = "";
+  // Flag to clear content or not on incoming message.
+  var clearContent = true;
 
   window.WebSocket = window.WebSocket || window.MozWebSocket;
 
@@ -34,8 +38,10 @@ $(function () {
    * Functionality for a user that just joined.
    */ 
   connection.onopen = function () {
+    message = prepareMessage("Server", welcomeMessage, new Date());
+    content.html(message);
+    status.text("");
     input.removeAttr("disabled");
-    status.text("Choose name:");
   };
 
   /*
@@ -43,10 +49,10 @@ $(function () {
    * @param error, the error from the server.
    */
   connection.onerror = function (error) {
-    content.html($("<p>", {
-      text: "Sorry, but there\'s some problem with your "
-         + "connection or the server is down. Error: " + error
-    }));
+    console.log("Error: " + error);
+    status.text("Error: There\'s a problem with your connection or the server is down.);");
+    content.text("");
+    input.hide();
   };
 
   /*
@@ -61,27 +67,50 @@ $(function () {
       return;
     }
 
-    // First response from server.
-    if (json.type === "color") { 
-      myColor = json.data;
-      status.text(myName + ": ").css("color", myColor);
-      input.removeAttr("disabled").focus();
+    // Clear content.
+    if(clearContent) {
+      content.html("");
+      clearContent = false;
     }
-    // Entire message history.
-    else if (json.type === "history") {
-      for (var i = 0; i < json.data.length; i++) {
-      addMessage(json.data[i].author, json.data[i].text,
-          json.data[i].color, new Date(json.data[i].time));
+
+    // Name assignment.
+    if (json.type === "name") {
+      var text = json.data.text;
+      if (myName === false) {
+        myName = text.replace(" joined the server!", "");
+        text = "Welcome to the server! Your username is: " + myName + ".";
       }
+      message = prepareMessage("Server", text, new Date(json.data.time));
+      stackMessage(message);
+
+      status.text("");
+      input.removeAttr("disabled");
     }
+
     // Single message.
     else if (json.type === "message") {
-      input.removeAttr("disabled"); 
-      addMessage(json.data.author, json.data.text,
-          json.data.color, new Date(json.data.time));
+      message = prepareMessage(json.data.author, json.data.text, new Date(json.data.time));
+      stackMessage(message);
+      status.text("");
+      input.removeAttr("disabled");
     }
+
+    // Entire message history.
+    else if (json.type === "history") {
+      for (var i = json.data.length - 1; i > 0; i--) {
+        message = prepareMessage(json.data[i].author, json.data[i].text, new Date(json.data[i].time));
+        addMessage(message);
+      }
+      status.text("");
+      input.removeAttr("disabled");
+    }
+
+    // Other type of content.
     else {
       console.log("JSON Type ERROR: ", json);
+      content.text("");
+      status.text("Error: Encountered error in JSON.");
+      input.removeAttr("disabled");
     }
   };
 
@@ -102,10 +131,6 @@ $(function () {
 
       // Disable the input field and wait for response of server.
       input.attr("disabled", "disabled");
-
-      if (myName === false) {
-        myName = msg;
-      }
     }
   });
 
@@ -114,26 +139,53 @@ $(function () {
    */
   setInterval(function() {
     if (connection.readyState !== 1) {
-      status.text("Error");
-      input.attr("disabled", "disabled").val(
-          "Unable to communicate with the WebSocket server.");
+      content.text("");
+      status.text("Error: Request timed out, unable to communicate with the WebSocket server.");
+      input.hide();
     }
   }, 3000);
 
-  /* Add message to the chat window.
+  /* 
+   * Add message to the chat window text.
+   * @param message, the message text.
+   */
+  function addMessage(message) {
+    content.html(content.html() + message);
+  }
+
+  /* 
+   * Stack message on top of the chat window text.
+   * @param message, the message text.
+   */
+  function stackMessage(message) {
+    content.html(message + content.html());
+  }
+
+  /* 
+   * Prepare message to add to the chat window.
    * @param author, the author of the message.
    * @param message, the message text.
-   * @param color, the message color.
    * @param dt, the time of the message.
    */
-  function addMessage(author, message, color, dt) {
-    content.prepend(
-        "<p>" +
-          "(" + (dt.getHours() < 10 ? "0" + dt.getHours() : dt.getHours()) +
-          ":" + (dt.getMinutes() < 10 ? "0" + dt.getMinutes() : dt.getMinutes()) +
-          ") " +
-          "<span style='color:" + color + "'>" + author + "</span>" +
-          ": " + message +
-        "</p>");
+  function prepareMessage(author, message, dt) {
+    return(
+        "(@" + (dt.getHours() < 10 ? "0" + dt.getHours() : dt.getHours()) +
+        ":" + (dt.getMinutes() < 10 ? "0" + dt.getMinutes() : dt.getMinutes()) +
+        ") " +
+        wrapMessage(message, author) + "<br>");
+  }
+
+  /* 
+   * Return a message wrapped by the global header and footer strings.
+   * @param message, the message to be wrapped.
+   * @param author, the author of the message.
+   */
+  function wrapMessage(message, author) {
+    if(author === "Server") {
+      return "<span style='color: #758fff'><b>" + author + "</b></span>: <b><em>" + message + "</em></b>";
+    }
+    else {
+      return "<span style='color: #758fff'><b>" + author + "</b></span>: " + message;
+    }
   }
 });

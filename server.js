@@ -17,6 +17,8 @@ var counter = 0;
 var history = [ ];
 // List of currently connected clients.
 var clients = [ ];
+// Number of current users, used to name a user when one joins.
+var numUsers = 0;
 
 // Input string helper function.
 function htmlEntities(str) {
@@ -141,59 +143,50 @@ wsServer.on('request', function(request) {
   // Initialize client variables.
   var index = clients.push(connection) - 1;
   var userName = false;
-  var userColor = false;
   console.log((new Date()) + ' Connection accepted.');
-
-  // Send back chat history as JSON.
-  if (history.length > 0) {
-    connection.sendUTF(
-        JSON.stringify({ type: 'history', data: history} ));
-  }
 
   // Send message callback.
   connection.on('message', function(message) {
     if (message.type === 'utf8') {
-     if (userName === false) {
+      // Store and broadcast username.
+      if (userName === false) {
         // Store username
-        //userName = htmlEntities(message.utf8Data);
-        userName = "TODO";
+        numUsers++;
+        userName = "User" + numUsers;
         console.log((new Date()) + ' User is known as: ' + userName);
 
         // Update history list.
         var obj = {
           time: (new Date()).getTime(),
-          //text: htmlEntities(message.utf8Data),
-          text: message.utf8Data,
-          author: userName,
+          text: userName + " joined the server!",
+          author: "Server",
         };
         history.push(obj);
         history = history.slice(-100);
 
         // Broadcast message to all connected clients.
-        var json = JSON.stringify({ type:'message', data: obj });
+        var json = JSON.stringify({ type:'name', data: obj });
         for (var i=0; i < clients.length; i++) {
           clients[i].sendUTF(json);
         }
       }
-      // Log and broadcast the message.
-      else { 
-        console.log((new Date()) + ' Received Message from ' + userName + ': ' + message.utf8Data);
-        
-        // Update history list.
-        var obj = {
-          time: (new Date()).getTime(),
-          //text: htmlEntities(message.utf8Data),
-          text: message.utf8Data,
-          author: userName,
-        };
-        history.push(obj);
-        history = history.slice(-100);
 
-        // Broadcast message to all connected clients.
-        var json = JSON.stringify({ type:'message', data: obj });
-        for (var i=0; i < clients.length; i++) {
-          clients[i].sendUTF(json);
-        }
+      // Log and broadcast the message.
+      console.log((new Date()) + ' Received Message from ' + userName + ': ' + message.utf8Data);
+      
+      // Update history list.
+      var obj = {
+        time: (new Date()).getTime(),
+        text: message.utf8Data,
+        author: userName,
+      };
+      history.push(obj);
+      history = history.slice(-100);
+
+      // Broadcast message to all connected clients.
+      var json = JSON.stringify({ type:'message', data: obj });
+      for (var i=0; i < clients.length; i++) {
+        clients[i].sendUTF(json);
       }
     }
   });
@@ -205,4 +198,9 @@ wsServer.on('request', function(request) {
       clients.splice(index, 1);
     }
   });
+
+  // Send back chat history as JSON.
+  if (history.length > 0) {
+    connection.sendUTF(JSON.stringify({ type: 'history', data: history} ));
+  }
 });

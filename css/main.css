@@ -1,11 +1,3 @@
-#opacity-level-1 {
-    opacity: 0.5;
-}
-
-#opacity-level-2 {
-    opacity: 0.7;
-}
-
 /* SUBMISSION */
 button:focus {
     outline: 0 !important;;
@@ -345,11 +337,27 @@ p {
 .well {
     background: #0d0e0f !important;
     color: white;
+    border-radius: 10px !important;
 }
 
 #black-well {
     background: black !important;
     color: white;
+}
+
+.grey-well {
+    color: white;
+    background: #24282c !important;
+    border-style: solid;
+    border-color:white;
+    border-width:1px;
+    border-radius: 10px;
+    color: white;
+    position: relative;
+    left: -16px;
+    top: -10px;
+    width: 105%;
+    padding-bottom: 10px;
 }
 
 #content-well {
@@ -366,11 +374,19 @@ body {
 }
 
 #status {
-    color: white !important;
-    font-size: 16px !important;
     position: relative;
-    top: -8px;
-    left: -12px;
+    left: 16px;
+    top: 5px;
+    overflow-wrap: break-word;
+    width: 90%;
+}
+
+#chat-history {
+    position: relative;
+    left: 16px;
+    top: 5px;
+    overflow-wrap: break-word;
+    width: 90%;
 }
 
 #content {
