@@ -2,7 +2,6 @@ $(function () {
   "use strict";
 
   // To avoid searching in DOM.
-  var content = $("#chat-history");
   var input = $("#input-field-bar");
   var status = $("#status");
 
@@ -10,20 +9,14 @@ $(function () {
   var serverIP = "54.174.152.202";
   // Port of the socket.
   var socketPort = "1337";
-  // Color assigned by the server.
-  var myColor = false;
-  // Name sent to the server.
-  var myName = false;
 
   window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-  // If browser doesn"t support WebSocket, notify and exit.
+  // If browser doesn't support WebSocket, notify and exit.
   if (!window.WebSocket) {
-    content.html($("<p>",
-      { text:"Sorry, but your browser doesn\'t support WebSocket."}
-    ));
-    input.hide();
-    $("span").hide();
+    status.text("Sorry, but your browser doesn\'t support WebSocket.");
+    input.attr("disabled", "disabled");
+    input.placeholder = "Unable to display message.";
     return;
   }
 
@@ -34,8 +27,8 @@ $(function () {
    * Functionality for a user that just joined.
    */ 
   connection.onopen = function () {
+    status.text("");
     input.removeAttr("disabled");
-    status.text("Choose name:");
   };
 
   /*
@@ -43,10 +36,10 @@ $(function () {
    * @param error, the error from the server.
    */
   connection.onerror = function (error) {
-    content.html($("<p>", {
-      text: "Sorry, but there\'s some problem with your "
-         + "connection or the server is down. Error: " + error
-    }));
+    console.log("Error: " + error);
+    status.text("Error: There\'s a problem with your connection or the server is down.);");
+    input.attr("disabled", "disabled");
+    input.placeholder = "Unable to display message.";
   };
 
   /*
@@ -61,27 +54,28 @@ $(function () {
       return;
     }
 
-    // First response from server.
-    if (json.type === "color") { 
-      myColor = json.data;
-      status.text(myName + ": ").css("color", myColor);
-      input.removeAttr("disabled").focus();
+    if(json.type === "color") {
+      // Don't need to handle this for memo.js.
+      status.text("");
+      input.removeAttr("disabled");
     }
     // Entire message history.
-    else if (json.type === "history") {
-      for (var i = 0; i < json.data.length; i++) {
-      addMessage(json.data[i].author, json.data[i].text,
-          json.data[i].color, new Date(json.data[i].time));
-      }
+    else if(json.type === "history") {
+      var i = json.data.length - 1;
+      addMessage(json.data[i].author, json.data[i].text, json.data[i].color, new Date(json.data[i].time));
+      status.text("");
+      input.removeAttr("disabled");
     }
     // Single message.
-    else if (json.type === "message") {
-      input.removeAttr("disabled"); 
-      addMessage(json.data.author, json.data.text,
-          json.data.color, new Date(json.data.time));
+    else if(json.type === "message") {
+      addMessage(json.data.author, json.data.text, json.data.color, new Date(json.data.time));
+      status.text("");
+      input.removeAttr("disabled");
     }
     else {
       console.log("JSON Type ERROR: ", json);
+      status.text("Error: Encountered error in JSON.");
+      input.removeAttr("disabled");
     }
   };
 
@@ -102,10 +96,6 @@ $(function () {
 
       // Disable the input field and wait for response of server.
       input.attr("disabled", "disabled");
-
-      if (myName === false) {
-        myName = msg;
-      }
     }
   });
 
@@ -114,9 +104,9 @@ $(function () {
    */
   setInterval(function() {
     if (connection.readyState !== 1) {
-      status.text("Error");
-      input.attr("disabled", "disabled").val(
-          "Unable to communicate with the WebSocket server.");
+      status.text("Error: Unable to communicate with the WebSocket server.");
+      input.attr("disabled", "disabled");
+      input.placeholder = "Unable to display message.";
     }
   }, 3000);
 
@@ -127,13 +117,12 @@ $(function () {
    * @param dt, the time of the message.
    */
   function addMessage(author, message, color, dt) {
-    content.prepend(
-        "<p>" +
-          "(" + (dt.getHours() < 10 ? "0" + dt.getHours() : dt.getHours()) +
-          ":" + (dt.getMinutes() < 10 ? "0" + dt.getMinutes() : dt.getMinutes()) +
-          ") " +
-          "<span style='color:" + color + "'>" + author + "</span>" +
-          ": " + message +
-        "</p>");
+    console.log("addMessage() called!");
+    document.getElementById("input-field-bar").placeholder =
+        "(" + (dt.getHours() < 10 ? "0" + dt.getHours() : dt.getHours()) +
+        ":" + (dt.getMinutes() < 10 ? "0" + dt.getMinutes() : dt.getMinutes()) +
+        ") " +
+        author + ": " + message +
+        "       (Use this textbox to reply or go to Chat)";
   }
 });

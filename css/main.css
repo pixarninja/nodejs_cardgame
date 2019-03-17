@@ -1,3 +1,17 @@
+/* PLACEHOLDER */
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: white;
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: white;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: white;
+}
+
 /* SUBMISSION */
 button:focus {
     outline: 0 !important;;
@@ -116,6 +130,8 @@ button:focus {
 
 #large-icon {
     font-size: 20px !important;
+    position: relative;
+    top: 3px;
 }
 
 .navbar-brand {
@@ -355,8 +371,16 @@ body {
     font-family: 'Quicksand', sans-serif;
 }
 
+#status {
+    color: white !important;
+    font-size: 16px !important;
+    position: relative;
+    top: -8px;
+    left: -12px;
+}
+
 #content {
-    padding-top: 50px;
+    padding-top: 85px;
     padding-left: 50px;
     padding-right: 50px;
     font-family: 'Quicksand', sans-serif;
@@ -373,6 +397,17 @@ body {
 #content a:hover, p a:hover {
     color: #758fff;
     text-decoration: underline;
+}
+
+#input-field-bar {
+    background-color: #24282c !important;
+    color: white;
+    width:100%;
+    border: 1px solid white !important;
+    padding: 8px;
+    border-radius: 10px;
+    position: relative;
+    bottom: 5px;
 }
 
 #input-field {
@@ -498,15 +533,8 @@ body {
     border-radius: 10px;
 }
 
-/*::placeholder {  //Chrome, Firefox, Opera, Safari 10.1+ 
-  color: #758fff;
-  opacity: 1;  //Firefox 
+.btn-lg {
+    padding-bottom: 15px !important;
+    position: relative;
+    top: 9px;
 }
-
-:-ms-input-placeholder {  //Internet Explorer 10-11 
-  color: #758fff;
-}
-
-::-ms-input-placeholder {  //Microsoft Edge 
-  color: #758fff;
-}*/

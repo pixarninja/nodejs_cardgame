@@ -4,7 +4,8 @@
 process.title = 'node-cardgame';
 
 // Port where we'll run the websocket server.
-var webSocketsServerPort = 8080;
+var httpServerPort = 8080;
+var socketServerPort = 1337;
 
 // Websocket and http servers.
 var webSocketServer = require('websocket').server;
@@ -37,8 +38,8 @@ var server = http.createServer(function(request, response) {
   console.log("Request: " + request.url + " (" + counter + ")");
 
   // Serve HTML to client.
-  if(request.url == "/app.html") {
-    fs.readFile("app.html", function(err, text){
+  if(request.url == "/chat.html") {
+    fs.readFile("chat.html", function(err, text){
       response.end(text);
     });
     return;
@@ -70,6 +71,12 @@ var server = http.createServer(function(request, response) {
   }
   else if(request.url == "/load-shared.js") {
     fs.readFile("load-shared.js", function(err, text){
+      response.end(text);
+    });
+    return;
+  }
+  else if(request.url == "/memo.js") {
+    fs.readFile("memo.js", function(err, text){
       response.end(text);
     });
     return;
@@ -112,13 +119,19 @@ var server = http.createServer(function(request, response) {
 });
 
 // Start HTTP server.
-server.listen(webSocketsServerPort, function() {
-  console.log((new Date()) + " Server is listening on port " + webSocketsServerPort);
+server.listen(httpServerPort, function() {
+  console.log((new Date()) + " HTTP Server is listening on port " + httpServerPort);
 });
 
 // WebSocket server.
+var socketServer = http.createServer(function(request, response) {
+  console.log("Socket Server got a request: " + request.url);
+});
+socketServer.listen(socketServerPort, function() {
+  console.log((new Date()) + " Socket Server is listening on port " + socketServerPort);
+});
 var wsServer = new webSocketServer({
-  httpServer: server
+  httpServer: socketServer
 });
 
 // WebSocket callback.
@@ -145,17 +158,38 @@ wsServer.on('request', function(request) {
     if (message.type === 'utf8') {
      if (userName === false) {
         // Store username and color
-        userName = htmlEntities(message.utf8Data);
+        //userName = htmlEntities(message.utf8Data);
+        userName = "TODO";
         userColor = colors.shift();
         connection.sendUTF(JSON.stringify({ type:'color', data: userColor }));
         console.log((new Date()) + ' User is known as: ' + userName + ' with ' + userColor + ' color.');
-      } else { // log and broadcast the message
+
+        // Update history list.
+        var obj = {
+          time: (new Date()).getTime(),
+          //text: htmlEntities(message.utf8Data),
+          text: message.utf8Data,
+          author: userName,
+          color: userColor
+        };
+        history.push(obj);
+        history = history.slice(-100);
+
+        // Broadcast message to all connected clients.
+        var json = JSON.stringify({ type:'message', data: obj });
+        for (var i=0; i < clients.length; i++) {
+          clients[i].sendUTF(json);
+        }
+      }
+      // Log and broadcast the message.
+      else { 
         console.log((new Date()) + ' Received Message from ' + userName + ': ' + message.utf8Data);
         
         // Update history list.
         var obj = {
           time: (new Date()).getTime(),
-          text: htmlEntities(message.utf8Data),
+          //text: htmlEntities(message.utf8Data),
+          text: message.utf8Data,
           author: userName,
           color: userColor
         };
