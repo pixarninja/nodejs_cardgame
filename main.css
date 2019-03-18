@@ -105,10 +105,29 @@ img {
     border: none !important;
 }
 
+.container {
+    width: 100% !important;
+    height: 270px !important;
+    display: inline-block !important;
+    margin: auto !important;
+    /*background: #24282c !important;*/
+    border-style: dashed;
+    border-color:white;
+    border-width:1px;
+    border-radius: 10px;
+    width: 105%;
+}
+
 #playing-card {
+    cursor: move;
     border-radius: 5%;
     border: 1px solid white !important;
-    width: 150px;
+    width: 100%;
+    height: 230px;
+    background-image: url("card.jpg");
+    background-size: 100% 100%;
+    position: relative;
+    top: 19px;
 }
 
 #title {

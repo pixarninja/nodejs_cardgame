@@ -12,7 +12,7 @@ var webSocketServer = require("websocket").server;
 var http = require("http");
 var fs = require("fs");
 var express = require("express");
-var ws = require('./node_modules/ws');
+var path = require('path');
 
 // List of previous data.
 var history = [ ];
@@ -30,54 +30,39 @@ function htmlEntities(str) {
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// Express implementation.
-var app = express()
+// HTTP Server Express implementation.
+var httpServer = express();
 
-// HTML
-app.get('/', function (req, res) {
-   res.sendFile(__dirname + '/playmat.html');
+// Statically host files from public/ directory.
+process.env.PWD = process.cwd();
+httpServer.use(express.static(path.join(process.env.PWD, 'public')));
+
+// Only handle HTML, other content is static.
+httpServer.get('/', function (req, res) {
+  res.sendFile(__dirname + '/index.html');
 });
-app.get('/playmat.html', function (req, res) {
-   res.sendFile(__dirname + '/playmat.html');
+httpServer.get('/index.html', function (req, res) {
+  res.sendFile(__dirname + '/index.html');
 });
-app.get('/playmat.html?', function (req, res) {
-   res.sendFile(__dirname + '/playmat.html');
+httpServer.get('/index.html?', function (req, res) {
+  res.sendFile(__dirname + '/index.html');
 });
-app.get('/header.html', function (req, res) {
-   res.sendFile(__dirname + '/header.html');
+httpServer.get('/header.html', function (req, res) {
+  res.sendFile(__dirname + '/header.html');
 });
-app.get('/footer.html', function (req, res) {
-   res.sendFile(__dirname + '/footer.html');
+httpServer.get('/footer.html', function (req, res) {
+  res.sendFile(__dirname + '/footer.html');
 });
-// JS
-app.get('/chat.js', function (req, res) {
-   res.sendFile(__dirname + '/chat.js');
+httpServer.get('/main.css', function (req, res) {
+  res.sendFile(__dirname + '/main.css');
 });
-app.get('/load-shared.js', function (req, res) {
-   res.sendFile(__dirname + '/load-shared.js');
-});
-app.get('/draggable.js', function (req, res) {
-   res.sendFile(__dirname + '/draggable.js');
-});
-app.get('/bootstrap.min.js', function (req, res) {
-   res.sendFile(__dirname + '/bootstrap.min.js');
-});
-app.get('/jquery.js', function (req, res) {
-   res.sendFile(__dirname + '/jquery.js');
-});
-// CSS
-app.get('/css/main.css', function (req, res) {
-   res.sendFile(__dirname + '/css/main.css');
-});
-app.get('/css/bootstrap.min.css', function (req, res) {
-   res.sendFile(__dirname + '/css/bootstrap.min.css');
-});
-// Images
-app.get('/images/card.jpg', function (req, res) {
-   res.sendFile(__dirname + '/images/card.jpg');
+httpServer.get('/card.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/card.jpg');
 });
 
-app.listen(httpServerPort, function () {
+// Start HTTP Server.
+httpServer.listen(httpServerPort, function () {
    console.log((new Date()) + " HTTP Server listening on port " + httpServerPort);
 })
 
