@@ -1,17 +1,18 @@
 "use strict";
 
 // Process title.
-process.title = 'node-cardgame';
+process.title = "node-cardgame";
 
 // Port where we'll run the websocket server.
-var httpServerPort = 8080;
+var httpServerPort = 80;
 var socketServerPort = 1337;
 
 // Websocket and http servers.
-var webSocketServer = require('websocket').server;
-var http = require('http');
-var fs = require('fs');
-var counter = 0;
+var webSocketServer = require("websocket").server;
+var http = require("http");
+var fs = require("fs");
+var express = require("express");
+var ws = require('./node_modules/ws');
 
 // List of previous data.
 var history = [ ];
@@ -19,6 +20,8 @@ var history = [ ];
 var clients = [ ];
 // Number of current users, used to name a user when one joins.
 var numUsers = 0;
+// Request counter.
+var counter = 0;
 
 // Input string helper function.
 function htmlEntities(str) {
@@ -27,102 +30,58 @@ function htmlEntities(str) {
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+// Express implementation.
+var app = express()
 
-// HTTP server setup.
-var server = http.createServer(function(request, response) {
-  // Not important for us. We're writing WebSocket server,
-  // not HTTP server.
-
-  counter++;
-  console.log("Request: " + request.url + " (" + counter + ")");
-
-  // Serve HTML to client.
-  if(request.url == "/chat.html") {
-    fs.readFile("chat.html", function(err, text){
-      response.end(text);
-    });
-    return;
-  }
-  else if(request.url == "/playmat.html" || request.url === "/playmat.html?") {
-    fs.readFile("playmat.html", function(err, text){
-      response.end(text);
-    });
-    return;
-  }
-  else if(request.url == "/header.html" || request.url == "/header.html?") {
-    fs.readFile("header.html", function(err, text){
-      response.end(text);
-    });
-    return;
-  }
-  else if(request.url == "/footer.html") {
-    fs.readFile("footer.html", function(err, text){
-      response.end(text);
-    });
-    return;
-  }
-  // Serve JavaScript to client.
-  else if(request.url == "/chat.js") {
-    fs.readFile("chat.js", function(err, text){
-      response.end(text);
-    });
-    return;
-  }
-  else if(request.url == "/load-shared.js") {
-    fs.readFile("load-shared.js", function(err, text){
-      response.end(text);
-    });
-    return;
-  }
-  else if(request.url == "/memo.js") {
-    fs.readFile("memo.js", function(err, text){
-      response.end(text);
-    });
-    return;
-  }
-  else if(request.url == "/bootstrap.min.js") {
-    fs.readFile("bootstrap.min.js", function(err, text){
-      response.end(text);
-    });
-    return;
-  }
-  else if(request.url == "/jquery.js") {
-    fs.readFile("jquery.js", function(err, text){
-      response.end(text);
-    });
-    return;
-  }
-  // Serve CSS to client.
-  else if(request.url == "/css/main.css") {
-    fs.readFile("css/main.css", function(err, text){
-      response.end(text);
-    });
-    return;
-  }
-  else if(request.url == "/css/bootstrap.min.css") {
-    fs.readFile("css/bootstrap.min.css", function(err, text){
-      response.end(text);
-    });
-    return;
-  }
-  // Serve images to client.
-  else if(request.url == "/images/wallart.jpg") {
-    fs.readFile("images/wallart.jpg", function(err, text){
-      response.end(text);
-    });
-    return;
-  }
-
-  response.setHeader("Content-Type", "text/html");
-  response.end("<p>Hello World. Request counter: " + counter + ".</p>");
+// HTML
+app.get('/', function (req, res) {
+   res.sendFile(__dirname + '/playmat.html');
+});
+app.get('/playmat.html', function (req, res) {
+   res.sendFile(__dirname + '/playmat.html');
+});
+app.get('/playmat.html?', function (req, res) {
+   res.sendFile(__dirname + '/playmat.html');
+});
+app.get('/header.html', function (req, res) {
+   res.sendFile(__dirname + '/header.html');
+});
+app.get('/footer.html', function (req, res) {
+   res.sendFile(__dirname + '/footer.html');
+});
+// JS
+app.get('/chat.js', function (req, res) {
+   res.sendFile(__dirname + '/chat.js');
+});
+app.get('/load-shared.js', function (req, res) {
+   res.sendFile(__dirname + '/load-shared.js');
+});
+app.get('/draggable.js', function (req, res) {
+   res.sendFile(__dirname + '/draggable.js');
+});
+app.get('/bootstrap.min.js', function (req, res) {
+   res.sendFile(__dirname + '/bootstrap.min.js');
+});
+app.get('/jquery.js', function (req, res) {
+   res.sendFile(__dirname + '/jquery.js');
+});
+// CSS
+app.get('/css/main.css', function (req, res) {
+   res.sendFile(__dirname + '/css/main.css');
+});
+app.get('/css/bootstrap.min.css', function (req, res) {
+   res.sendFile(__dirname + '/css/bootstrap.min.css');
+});
+// Images
+app.get('/images/card.jpg', function (req, res) {
+   res.sendFile(__dirname + '/images/card.jpg');
 });
 
-// Start HTTP server.
-server.listen(httpServerPort, function() {
-  console.log((new Date()) + " HTTP Server is listening on port " + httpServerPort);
-});
+app.listen(httpServerPort, function () {
+   console.log((new Date()) + " HTTP Server listening on port " + httpServerPort);
+})
 
-// WebSocket server.
+// WebSocket server setup.
 var socketServer = http.createServer(function(request, response) {
   console.log("Socket Server got a request: " + request.url);
 });
@@ -169,6 +128,31 @@ wsServer.on('request', function(request) {
         for (var i=0; i < clients.length; i++) {
           clients[i].sendUTF(json);
         }
+      }
+      // Possibly update name.
+      if(message.utf8Data.includes("I am ")) {
+        // Undo preparation of string.
+        console.log(message.utf8Data);
+        var newName = message.utf8Data.replace("I am ", "").replace("<span style='color: #758fff'><b>", "").replace("</b></span>: ", "").replace("<b><em>", "").replace("</em></b>", "").replace(/^\s+|\s+$/g, "").substring(0, 16);
+
+        // Update history list.
+        var obj = {
+          time: (new Date()).getTime(),
+          text: userName + " changed their name to " + newName,
+          author: "Server",
+        };
+        history.push(obj);
+        history = history.slice(-100);
+
+        // Broadcast message to all connected clients.
+        var json = JSON.stringify({ type:'message', data: obj });
+        for (var i=0; i < clients.length; i++) {
+          clients[i].sendUTF(json);
+        }
+
+        // Finally update name.
+        userName = newName;
+        console.log("Changed name to " + newName);
       }
 
       // Log and broadcast the message.

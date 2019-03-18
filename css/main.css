@@ -3,6 +3,19 @@ button:focus {
     outline: 0 !important;;
 }
 
+.btn {
+    background: linear-gradient(#758fff, #0d324e);
+    color: white;
+    border: none;
+    border-radius: 10px;
+}
+
+.btn-lg {
+    padding-bottom: 15px !important;
+    position: relative;
+    top: 9px;
+}
+
 #info-submit {
     width: 100px;
     height: 100%;
@@ -21,72 +34,6 @@ button:focus {
     color: white;
     border: none;
     border-radius: 10px;
-}
-
-#left-button {
-    padding-left: 0;
-    padding-right: 0;
-    width: 100% !important;
-    position: relative;
-    top: -5px;
-    height: 3em;
-    font-size : 16px;
-    background: linear-gradient(#758fff, #0d324e);
-    color: white;
-    border: none;
-    border-radius: 10px 0px 0px 10px;
-}
-
-#middle-button {
-    padding-left: 0;
-    padding-right: 0;
-    width: 100% !important;
-    position: relative;
-    top: -5px;
-    height: 3em;
-    font-size : 16px;
-    background: linear-gradient(#758fff, #0d324e);
-    color: white;
-    border: none;
-    border-radius: 0px;
-}
-
-#right-button {
-    padding-left: 0;
-    padding-right: 0;
-    width: 100% !important;
-    position: relative;
-    top: -5px;
-    height: 3em;
-    font-size : 16px;
-    background: linear-gradient(#758fff, #0d324e);
-    color: white;
-    border: none;
-    border-radius: 0px 10px 10px 0px;
-}
-
-#alt-submit {
-    width: 100%;
-    height: 2em;
-    font-size : 16px;
-    background: linear-gradient(#758fff, #0d324e);
-    color: white;
-    border: none;
-    border-radius: 10px;
-}
-
-#menu-submit {
-    width: 100%;
-    height: 3em;
-    font-size : 14px;
-    background-color: white;
-    color: black;
-    border: none;
-}
-
-#menu-submit:hover, #form-submit:hover, #info-submit:hover, #alt-submit:hover, #right-button:hover, #left-button:hover, #middle-button:hover {
-    background: #758fff;
-    color: white;
 }
 
 /* HEADER AND FOOTER */
@@ -148,162 +95,20 @@ button:focus {
     top: 7px;
 }
 
-#add-bar-left {
-    background: url("images/wallart.jpg");
-    height: 100%;
-    position: fixed;
-    left: 0px;
-    background-position: center-x;
-}
-
-#add-bar-right {
-    background: url("images/wallart.jpg");
-    height: 100%;
-    position: fixed;
-    right: 0px;
-    background-position: center-x;
-}
-
-/* TABLE */
-#head-bar {
-    background: linear-gradient(#758fff, #1a4a77, #06080c);
-    font-weight: normal;
-    font-family: 'Quicksand', sans-serif;
-    color: white;
-}
-
-#center-img {
-    display: block;
-    margin: 0 auto;
-}
-
-#entry-small {
-    width: 50px;
-}
-
-#entry-medium {
-    width: 100px;
-}
-
-#entry-medium-center {
-    width: 100px;
-    text-align: center;
-}
-
-#entry-large {
-    width: 150px;
-}
-
-#striped-table tr:nth-child(even){
-    background-color: #f2f2f2;
-}
-
-.table-item {
-    display: block;
-    overflow-wrap: break-word;
-}
-
 /* BODY */
-#close {
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    font-size: 32px;
-    color: white;
-    cursor: pointer;
-}
-
-#button-back-left {
-    height: 35px !important;
-    cursor: pointer;
-    border: none;
-    border-radius: 10px 0px 0px 10px;
-    background: linear-gradient(#758fff, #0d324e);
-    margin: auto;
-    display: table;
-}
-
-#button-back-middle {
-    height: 35px !important;
-    cursor: pointer;
-    border: none;
-    border-radius: 0px 0px 0px 0px;
-    background: linear-gradient(#758fff, #0d324e);
-    margin: auto;
-    display: table;
-}
-
-#button-back-right {
-    height: 35px !important;
-    cursor: pointer;
-    border: none;
-    border-radius: 0px 10px 10px 0px;
-    background: linear-gradient(#758fff, #0d324e);
-    margin: auto;
-    display: table;
-}
-
-#button-back-pill {
-    height: 35px !important;
-    cursor: pointer;
-    border: none;
-    border-radius: 10px 10px 10px 10px;
-    background: linear-gradient(#758fff, #0d324e);
-    margin: auto;
-    display: table;
-}
-
-#button-symbol {
-    position: relative;
-    top: 7px;
-    cursor: pointer;
-    color: white !important;
-    text-decoration: none !important;
-    font-size : 20px;
-    background: none;
-}
-
-#button-back-left:hover, #button-back-middle:hover, #button-back-right:hover, #button-back-pill:hover {
-    background: #758fff;
-}
-
-textarea {
-    min-width: 100%;
-    max-width: 101%;
-    min-height: 100px;
-    overflow: hidden;
-}
-
-textarea-small {
-    min-width: 100%;
-    max-width: 101%;
-    min-height: 50px;
-    overflow: hidden;
-}
-
-#in-line-hr {
-    position: relative;
-    left: -8px;
-    width: 98%;
-}
-
-#in-line-hr-big {
-    position: relative;
-    left: -15px;
-    width: 105%;
-}
 
 img {
     border: 1px solid white !important;
 }
 
-.img-special {
-    border-radius: 5%;
-    border: 1px solid white !important;
-}
-
 .img-noborder {
     border: none !important;
+}
+
+#playing-card {
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 150px;
 }
 
 #title {
@@ -360,15 +165,6 @@ p {
     padding-bottom: 10px;
 }
 
-#content-well {
-    background: #0d0e0f !important;
-    border-style: solid;
-    border-color:white;
-    border-width:1px;
-    border-radius: 10px;
-    color: white;
-}
-
 body {
     font-family: 'Quicksand', sans-serif;
 }
@@ -378,7 +174,7 @@ body {
     left: 16px;
     top: 5px;
     overflow-wrap: break-word;
-    width: 90%;
+    width: 85%;
 }
 
 #chat-history {
@@ -386,7 +182,7 @@ body {
     left: 16px;
     top: 5px;
     overflow-wrap: break-word;
-    width: 90%;
+    width: 85%;
 }
 
 #content {
@@ -426,125 +222,4 @@ body {
     color: white;
     border: 2px solid #24282c;
     font-size: 14px !important;
-}
-
-.input-number {
-    width: 50px !important;
-    font-size: 16px;
-}
-
-#input-field-alt {
-    background-color: #24282c;
-    color: white;
-    border: 2px solid #24282c;
-    font-size: 14px !important;
-}
-
-#ad-bar {
-    background-image: url(images/black-square.jpg);
-    height: 100%;
-    width: 100%;
-    background-attachment: fixed;
-}
-
-/* DECKS AND COLLECTIONS */
-.deck-image {
-    position: relative;
-    top: 0;
-    left: 0;
-}
-
-.front {
-    width: 85%;
-    position: absolute;
-    left: -10px;
-    top: -10px;
-}
-
-.back {
-    width: 85%;
-    position: relative;
-    left: 10px;
-    top: 10px;
-}
-
-.sleeves {
-    width: 100%;
-}
-
-.cover {
-    position: absolute;
-    top: 5%;
-    left: 5%;
-    width: 90%;
-}
-
-.cover-special {
-    position: absolute;
-    top: 2.5%;
-    left: 5%;
-    right: 5%;
-}
-
-.buffer {
-    width: 100%;
-    border: none !important;
-}
-
-.collection-image {
-    position: relative;
-    top: 0;
-    left: 0;
-}
-
-.collect-back {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 81%;
-    opacity: 0.40;
-    filter: alpha(opacity=40);
-}
-
-.collect-mid {
-    position: absolute;
-    top: 7.25%;
-    left: 9%;
-    width: 81%;
-    opacity: 0.75;
-    filter: alpha(opacity=75);
-}
-
-.collect-fore {
-    position: absolute;
-    top: 14.5%;
-    left: 19%;
-    width: 81%;
-}
-
-.details {
-    background-color: black;
-    color: white;
-    border: 1px solid white;
-    font-size: 16px;
-}
-
-.dropdown-menu {
-    background-color: black !important;
-    color: white;
-    border: 1px solid white;
-    border-radius:10px;
-}
-
-.btn {
-    background: linear-gradient(#758fff, #0d324e);
-    color: white;
-    border: none;
-    border-radius: 10px;
-}
-
-.btn-lg {
-    padding-bottom: 15px !important;
-    position: relative;
-    top: 9px;
 }

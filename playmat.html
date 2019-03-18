@@ -21,7 +21,7 @@
         <!-- Content -->
         <div id="content" class="row">
           <h4>
-            <input id="input-field-bar" disabled="disabled" placeholder="Type in here to send a message!"></input>
+            <input id="input-field-bar" disabled="disabled" placeholder="Type in here to send a message! You can rename yourself by typing 'I am ' followed by your name."></input>
           </h4>
           <div class="col-xs-2">
             <h4>
@@ -37,18 +37,19 @@
           </div>
           <div class="col-xs-10">
             <div class="well row">
-              <div class="col-xs-12">
-                <div class="col-xs-12">
-                  <h2>Playmat</h2><br>
-                  <h4>
-                    <p>Below is the playmat.</p>
-                    <br><br><hr>
-                  </h4>
+              <div class="col-xs-4" style="text-align: center;">
+                <div class="container" style="width: 100%;display: inline-block;margin: auto;">
+                  <div class="box" draggable="true">
+                   <img src="images/card.jpg" id="playing-card"></img> 
+                  </div>
                 </div>
-                <div class="col-xs-12">
-                  <h4>
-                    <p>Playmat!</p>
-                  </h4>
+              </div>
+              <div class="col-xs-4" style="text-align: center;">
+                <div class="container well" style="width: 100%">
+                </div>
+              </div>
+              <div class="col-xs-4" style="text-align: center;">
+                <div class="container well" style="width: 100%">
                 </div>
               </div>
             </div>
@@ -60,5 +61,6 @@
     <script src="jquery.js"></script>
     <script src="load-shared.js"></script>
     <script src="chat.js"></script>
+    <script src="draggable.js"></script>
   </body>
 </html>

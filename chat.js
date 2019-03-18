@@ -77,8 +77,8 @@ $(function () {
     if (json.type === "name") {
       var text = json.data.text;
       if (myName === false) {
-        myName = text.replace(" joined the server!", "");
-        text = "Welcome to the server! Your username is: " + myName + ".";
+        var message = text.replace(" joined the server!", "");
+        text = "Welcome to the server! Your username is: " + message + ".";
       }
       message = prepareMessage("Server", text, new Date(json.data.time));
       stackMessage(message);
