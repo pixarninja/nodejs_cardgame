@@ -37,7 +37,7 @@ var httpServer = express();
 process.env.PWD = process.cwd();
 httpServer.use(express.static(path.join(process.env.PWD, 'public')));
 
-// Only handle HTML, other content is static.
+// Handle serving non-static content.
 httpServer.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
@@ -46,6 +46,9 @@ httpServer.get('/index.html', function (req, res) {
 });
 httpServer.get('/index.html?', function (req, res) {
   res.sendFile(__dirname + '/index.html');
+});
+httpServer.get('/help.html', function (req, res) {
+  res.sendFile(__dirname + '/help.html');
 });
 httpServer.get('/header.html', function (req, res) {
   res.sendFile(__dirname + '/header.html');

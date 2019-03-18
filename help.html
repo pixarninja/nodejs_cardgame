@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Mat</title>
+    <link rel="shortcut icon" href="images/webicon.ico" type="image/x-icon">
+    <link rel="icon" href="images/webicon.ico" type="image/x-icon">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="main.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Quicksand|Poiret+One" rel="stylesheet">
+    <form id="index-form" action="/index.html" method="GET">
+    </form>
+  </head>
+  <body style="background: black;">
+    <div class="container-fluid">
+      <div id="header"></div>
+      <div class="row" align="left">
+        <!-- Content -->
+        <div id="content" class="row">
+          <div class="col-xs-12">
+            <div class="well">
+              <h2>Welcome to Play<span class="glyphicon glyphicon-knight"></span>Mat!</h2><br>
+              <h4>
+                <p>
+                    Welcome to Play<span class="glyphicon glyphicon-knight" id="small-icon"></span>Mat, an exprimental card game developed with NodeJS and Docker!
+                </p>
+                <p>
+                  This website is free to use. The website owner does not own any of the content on this website, nor do they take responsibility for information put on the website by its users. This website's source code (aside from sensitive backend data) is provided on <a href="https://github.com/pixarninja/nodejs_cardgame" target="_blank">GitHub</a>. Amazon AWS is used to host the server and WebSocket connections.
+                </p>
+                <br>
+              </h4>
+              <h2>How To<hr></h2>
+              <h4>
+                <p>
+                  The game is implemented on <a href="http://54.174.152.202/">Play Mat</a> home page (port 80). WebSockets are instantiated as needed, for as many games as are going on. The chat message box you see to the right of the game page is tied to each game; players may communicate with each other there. If you would like to rename yourself in the chat server, you can do so by typing 'I am ' followed by your new name.
+                </p>
+                <p>
+                  Players may join a game as an observer or player, or may start a new game if they wish. This dicision will be available from the <a href="http://54.174.152.202/matchmaking.html">Match Making</a> link in the menu.
+                </p>
+                <br>
+              </h4>
+              <h2>Contact Information<hr></h2>
+              <div class="row">
+                <div class="col-xs-12 col-sm-4 col-md-2">
+                  <img class="img-special" width="100%" src="images/creator.jpg" alt="images/creator.jpg" id="center-img">
+                </div>
+                <div class="col-xs-12 col-sm-8 col-md-10">
+                  <h4>
+                    <p>My name is Wes Harris, I am a Computer Science Graduate student at the University of Colorado at Colorado Springs. If you would like to contact me, you can do so via the contact details below.</p>
+                    <br><br>
+                    <div class="col-xs-12 hidden-sm hidden-md hidden-lg"><br></div>
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-6 col-md-3" style="padding-bottom: 10px;" style="padding-bottom: 10px;">
+                        <div class="col-xs-2" style="margin: auto;display: table;width: 15px !important;" id="button-back-pill" title="wesharris505@gmail.com" onclick="document.getElementById('emailForm').submit();">
+                          <span id="button-symbol" class="glyphicon glyphicon-envelope"></span>
+                        </div>
+                        <span style="position: relative;top: 8px;left: 10px;">
+                          wesharris505@gmail.com
+                        </span>
+                        <form id="emailForm" action="mailto:wesharris505@gmail.com" target="_blank"></form>
+                      </div>
+                      <div class="col-xs-12 col-sm-6 col-md-3" style="padding-bottom: 10px;">
+                        <div class="col-xs-2" style="margin: auto;display: table;width: 15px !important;" id="button-back-pill" title="New Mexico Tech" onclick="document.getElementById('educationForm').submit();">
+                          <span id="button-symbol" class="glyphicon glyphicon-education"></span>
+                        </div>
+                        <span style="position: relative;top: 8px;left: 10px;">
+                          Studying Computer Science
+                        </span>
+                        <form id="educationForm" action="https://www.cs.nmt.edu/" target="_blank"></form>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-6 col-md-3" style="padding-bottom: 10px;">
+                        <div class="col-xs-2" style="margin: auto;display: table;width: 15px !important;" id="button-back-pill" title="Personal Website" onclick="document.getElementById('personalForm').submit();">
+                          <span id="button-symbol" class="glyphicon glyphicon-bookmark"></span>
+                        </div>
+                        <span style="position: relative;top: 8px;left: 10px;">
+                          Personal Website
+                        </span>
+                        <form id="personalForm" action="https://www.markwesleyharris.com/" target="_blank"></form>
+                      </div>
+                      <div class="col-xs-12 col-sm-6 col-md-3" style="padding-bottom: 10px;">
+                        <div class="col-xs-2" style="margin: auto;display: table;width: 15px !important;" id="button-back-pill" title="Facebook Profile" onclick="document.getElementById('facebookForm').submit();">
+                          <span id="button-symbol" class="glyphicon glyphicon-thumbs-up"></span>
+                        </div>
+                        <span style="position: relative;top: 8px;left: 10px;">
+                          Facebook Profile
+                        </span>
+                        <form id="facebookForm" action="https://www.facebook.com/wesley.harris.the.pixar.ninja" target="_blank"></form>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-6 col-md-3" style="padding-bottom: 10px;">
+                        <div class="col-xs-2" style="margin: auto;display: table;width: 15px !important;" id="button-back-pill" title="GitHub" onclick="document.getElementById('gitForm').submit();">
+                          <span id="button-symbol" class="glyphicon glyphicon-user"></span>
+                        </div>
+                        <span style="position: relative;top: 8px;left: 10px;">
+                          GitHub
+                        </span>
+                        <form id="gitForm" action="https://github.com/pixarninja" target="_blank"></form>
+                      </div>
+                    </div>
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="footer"></div>
+      </div>
+    </div>
+    <script src="js/jquery.js"></script>
+    <script src="js/load-shared.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/draggable.js"></script>
+  </body>
+</html>

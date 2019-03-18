@@ -96,6 +96,59 @@ button:focus {
 }
 
 /* BODY */
+#button-back-left {
+    height: 35px !important;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px 0px 0px 10px;
+    background: linear-gradient(#758fff, #0d324e);
+    margin: auto;
+    display: table;
+}
+
+#button-back-middle {
+    height: 35px !important;
+    cursor: pointer;
+    border: none;
+    border-radius: 0px 0px 0px 0px;
+    background: linear-gradient(#758fff, #0d324e);
+    margin: auto;
+    display: table;
+}
+
+#button-back-right {
+    height: 35px !important;
+    cursor: pointer;
+    border: none;
+    border-radius: 0px 10px 10px 0px;
+    background: linear-gradient(#758fff, #0d324e);
+    margin: auto;
+    display: table;
+}
+
+#button-back-pill {
+    height: 35px !important;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px 10px 10px 10px;
+    background: linear-gradient(#758fff, #0d324e);
+    margin: auto;
+    display: table;
+}
+
+#button-symbol {
+    position: relative;
+    top: 7px;
+    cursor: pointer;
+    color: white !important;
+    text-decoration: none !important;
+    font-size : 20px;
+    background: none;
+}
+
+#button-back-left:hover, #button-back-middle:hover, #button-back-right:hover, #button-back-pill:hover {
+    background: #758fff;
+}
 
 img {
     border: 1px solid white !important;
@@ -108,14 +161,15 @@ img {
 .container {
     width: 100% !important;
     height: 270px !important;
-    display: inline-block !important;
-    margin: auto !important;
     /*background: #24282c !important;*/
     border-style: dashed;
     border-color:white;
     border-width:1px;
     border-radius: 10px;
-    width: 105%;
+}
+
+#container-parent {
+    padding-bottom: 15px;
 }
 
 #playing-card {
@@ -178,9 +232,6 @@ p {
     border-radius: 10px;
     color: white;
     position: relative;
-    left: -16px;
-    top: -10px;
-    width: 105%;
     padding-bottom: 10px;
 }
 
@@ -232,6 +283,7 @@ body {
     padding: 8px;
     border-radius: 10px;
     position: relative;
+    top: -10px;
     bottom: 5px;
 }
 
