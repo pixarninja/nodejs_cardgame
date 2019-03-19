@@ -95,38 +95,14 @@ wsServer.on('request', function(request) {
   // Send message callback.
   connection.on('message', function(message) {
     if (message.type === 'utf8') {
-      // Store and broadcast username.
-      if (userName === false) {
-        // Store username
-        numUsers++;
-        userName = "User" + numUsers;
-        console.log((new Date()) + ' User is known as: ' + userName);
+      // Attempt to parse as JSON.
+      try {
+        var json = JSON.parse(message.utf8Data);
 
         // Update history list.
         var obj = {
           time: (new Date()).getTime(),
-          text: userName + " joined the server!",
-          author: "Server",
-        };
-        history.push(obj);
-        history = history.slice(-100);
-
-        // Broadcast message to all connected clients.
-        var json = JSON.stringify({ type:'name', data: obj });
-        for (var i=0; i < clients.length; i++) {
-          clients[i].sendUTF(json);
-        }
-      }
-      // Possibly update name.
-      if(message.utf8Data.includes("I am ")) {
-        // Undo preparation of string.
-        console.log(message.utf8Data);
-        var newName = message.utf8Data.replace("I am ", "").replace("<span style='color: #758fff'><b>", "").replace("</b></span>: ", "").replace("<b><em>", "").replace("</em></b>", "").replace(/^\s+|\s+$/g, "").substring(0, 16);
-
-        // Update history list.
-        var obj = {
-          time: (new Date()).getTime(),
-          text: userName + " changed their name to " + newName,
+          text: userName + " dropped a card at " + json.position,
           author: "Server",
         };
         history.push(obj);
@@ -137,28 +113,78 @@ wsServer.on('request', function(request) {
         for (var i=0; i < clients.length; i++) {
           clients[i].sendUTF(json);
         }
+      } catch(e) {
+        // Store and broadcast username.
+        if (userName === false) {
+          // Store username
+          numUsers++;
+          userName = "User" + numUsers;
+          console.log((new Date()) + ' User is known as: ' + userName);
 
-        // Finally update name.
-        userName = newName;
-        console.log("Changed name to " + newName);
-      }
+          // Update history list.
+          var obj = {
+            time: (new Date()).getTime(),
+            text: userName + " joined the server!",
+            author: "Server",
+          };
+          history.push(obj);
+          history = history.slice(-100);
 
-      // Log and broadcast the message.
-      console.log((new Date()) + ' Received Message from ' + userName + ': ' + message.utf8Data);
-      
-      // Update history list.
-      var obj = {
-        time: (new Date()).getTime(),
-        text: message.utf8Data,
-        author: userName,
-      };
-      history.push(obj);
-      history = history.slice(-100);
+          // Broadcast message to all connected clients.
+          var json = JSON.stringify({ type:'name', data: obj });
+          for (var i=0; i < clients.length; i++) {
+            clients[i].sendUTF(json);
+          }
+        }
 
-      // Broadcast message to all connected clients.
-      var json = JSON.stringify({ type:'message', data: obj });
-      for (var i=0; i < clients.length; i++) {
-        clients[i].sendUTF(json);
+        // Drop if this is a handshake.
+        if(message.utf8Data === "Handshake") {
+          return;
+        }
+
+        // Possibly update name.
+        if(message.utf8Data.includes("My name is ")) {
+          // Undo preparation of string.
+          console.log(message.utf8Data);
+          var newName = message.utf8Data.replace("My name is ", "").replace("<span style='color: #758fff'><b>", "").replace("</b></span>: ", "").replace("<b><em>", "").replace("</em></b>", "").replace(/^\s+|\s+$/g, "").substring(0, 16);
+
+          // Update history list.
+          var obj = {
+            time: (new Date()).getTime(),
+            text: userName + " changed their name to " + newName,
+            author: "Server",
+          };
+          history.push(obj);
+          history = history.slice(-100);
+
+          // Broadcast message to all connected clients.
+          var json = JSON.stringify({ type:'message', data: obj });
+          for (var i=0; i < clients.length; i++) {
+            clients[i].sendUTF(json);
+          }
+
+          // Finally update name.
+          userName = newName;
+          console.log("Changed name to " + newName);
+        }
+
+        // Log and broadcast the message.
+        console.log((new Date()) + ' Received Message from ' + userName + ': ' + message.utf8Data);
+        
+        // Update history list.
+        var obj = {
+          time: (new Date()).getTime(),
+          text: message.utf8Data,
+          author: userName,
+        };
+        history.push(obj);
+        history = history.slice(-100);
+
+        // Broadcast message to all connected clients.
+        var json = JSON.stringify({ type:'message', data: obj });
+        for (var i=0; i < clients.length; i++) {
+          clients[i].sendUTF(json);
+        }
       }
     }
   });

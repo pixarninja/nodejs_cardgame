@@ -1,6 +1,10 @@
 $(function () {
   "use strict";
 
+  // Globals variables.
+  var box = document.getElementsByClassName("box")[0];
+  var containers = document.getElementsByClassName("container");
+
   // To avoid searching in DOM.
   var content = $("#chat-history");
   var input = $("#input-field-bar");
@@ -10,8 +14,9 @@ $(function () {
   var serverIP = "54.174.152.202";
   // Port of the socket.
   var socketPort = "1337";
-  // Name sent to the server.
+  // Name flag and username sent.
   var myName = false;
+  var userName = "Unkown";
   // Welcome message (first message displayed).
   var welcomeMessage = "Currently there are no active message channels. Use the textbox below to start chatting!";
   // Last recorded message.
@@ -19,6 +24,14 @@ $(function () {
   // Flag to clear content or not on incoming message.
   var clearContent = true;
 
+  // Initialize listeners for container objects.
+  for(var container of containers) {
+    container.addEventListener("dragover", dragover);
+    container.addEventListener("dragenter", dragenter);
+    container.addEventListener("drop", drop);
+  }
+
+  // Setup WebSocket.
   window.WebSocket = window.WebSocket || window.MozWebSocket;
 
   // If browser doesn"t support WebSocket, notify and exit.
@@ -38,6 +51,10 @@ $(function () {
    * Functionality for a user that just joined.
    */ 
   connection.onopen = function () {
+    // Send handshake to server.
+    connection.send("Handshake");
+
+    // Show welcome message.
     message = prepareMessage("Server", welcomeMessage, new Date());
     content.html(message);
     status.text("");
@@ -79,6 +96,7 @@ $(function () {
       if (myName === false) {
         var message = text.replace(" joined the server!", "");
         text = "Welcome to the server! Your username is: " + message + ".";
+        userName = message;
       }
       message = prepareMessage("Server", text, new Date(json.data.time));
       stackMessage(message);
@@ -187,5 +205,38 @@ $(function () {
     else {
       return "<span style='color: #758fff'><b>" + author + "</b></span>: " + message;
     }
+  }
+
+  /*
+   * Provide dragover callback.
+   */
+  function dragover(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  
+  /*
+   * Provide dragenter callback.
+   */
+  function dragenter(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  
+  /*
+   * Provide drop callback.
+   */
+  function drop() {
+    try{
+      // Send updated JSON through WebSocket.
+      var message = JSON.stringify({
+        position: this.id.replace("-", " ")
+      });
+      connection.send(message);
+    } catch(e) {
+      ;
+    }
+
+    this.append(box);
   }
 });
