@@ -2,7 +2,7 @@ $(function () {
   "use strict";
 
   // Globals variables.
-  var box = document.getElementsByClassName("box")[0];
+  var card = document.getElementsByClassName("card")[0];
   var containers = document.getElementsByClassName("container");
 
   // To avoid searching in DOM.
@@ -18,11 +18,12 @@ $(function () {
   var myName = false;
   var userName = "Unkown";
   // Welcome message (first message displayed).
-  var welcomeMessage = "Currently there are no active message channels. Use the textbox below to start chatting!";
+  var welcomeMessage = "Currently there are no active message channels. Use the textcard below to start chatting!";
   // Last recorded message.
   var message = "";
   // Flag to clear content or not on incoming message.
   var clearContent = true;
+  var myField = "";
 
   // Initialize listeners for container objects.
   for(var container of containers) {
@@ -97,12 +98,19 @@ $(function () {
         var message = text.replace(" joined the server!", "");
         text = "Welcome to the server! Your username is: " + message + ".";
         userName = message;
+        myName = true;
       }
       message = prepareMessage("Server", text, new Date(json.data.time));
       stackMessage(message);
 
       status.text("");
       input.removeAttr("disabled");
+    }
+
+    // Update to a field.
+    else if (json.type === "field") {
+      // Write field to screen.
+      configureField(json.data.player, json.data.field);
     }
 
     // Single message.
@@ -227,16 +235,81 @@ $(function () {
    * Provide drop callback.
    */
   function drop() {
-    try{
-      // Send updated JSON through WebSocket.
-      var message = JSON.stringify({
-        position: this.id.replace("-", " ")
-      });
-      connection.send(message);
-    } catch(e) {
-      ;
+    // Clear child nodes and find card again.
+    card = document.getElementsByClassName("card")[0]; // TODO: add more cards...
+    var parentNode = card.parentNode;
+    while(parentNode.firstChild) {
+      parentNode.removeChild(parentNode.firstChild);
     }
 
-    this.append(box);
+    // Append the card node.
+    this.append(card);
+
+    try{
+      // Store field data as JSON
+      var field = {};
+      for(var container of containers) {
+        var child = container.childNodes[0];
+        if(child != null) {
+          console.log(child);
+          field[container.id] = child.id;
+        }
+      }
+
+      // Send updated JSON through WebSocket.
+      var message = {};
+      if(!this.id.includes("hand")) {
+        message['position'] = this.id.replace("-", " ").replace("slot", "Slot");
+        message['cardName'] = this.childNodes[0].id;
+      }
+      message['field'] = field;
+
+      connection.send(JSON.stringify(message));
+    } catch(e) {
+      console.log('Error: ' + e);
+    }
+  }
+
+  /*
+   * Overwrite a field with new data.
+   * @param player, the field to overwrite.
+   * @param field, the data for the field.
+   */
+  function configureField(player, data) {
+    try {
+      for(var container of containers) {
+        if(data[container.id] != null) {
+          // Clear child nodes.
+          while(container.firstChild) {
+            container.removeChild(container.firstChild);
+          }
+
+          // Create base card div.
+          var card = document.createElement("div");
+          card.setAttribute("class", "card");
+          card.setAttribute("id", data[container.id]);
+          card.setAttribute("draggable", "true");
+
+          // Create child for image.
+          var img = document.createElement("img");
+          img.setAttribute("src", "");
+          img.setAttribute("id", "playing-card");
+
+          // Build tree.
+          card.appendChild(img);
+          container.appendChild(card);
+
+          console.log(container);
+        }
+        else {
+          // Clear child nodes.
+          while(container.firstChild) {
+            container.removeChild(container.firstChild);
+          }
+        }
+      }
+    } catch(e) {
+      console.log('Error: ' + e);
+    }
   }
 });

@@ -99,20 +99,34 @@ wsServer.on('request', function(request) {
       try {
         var json = JSON.parse(message.utf8Data);
 
-        // Update history list.
-        var obj = {
-          time: (new Date()).getTime(),
-          text: userName + " dropped a card at " + json.position,
-          author: "Server",
-        };
-        history.push(obj);
-        history = history.slice(-100);
+        // Check if a broadcast should be made.
+        //if(json.position != null && json.cardName != null) {
+          /* Update history list.
+          var obj = {
+            time: (new Date()).getTime(),
+            text: userName + " dropped card " + json.cardName + " at " + json.position,
+            author: "Server",
+          };
+          history.push(obj);
+          history = history.slice(-100);
 
-        // Broadcast message to all connected clients.
-        var json = JSON.stringify({ type:'message', data: obj });
-        for (var i=0; i < clients.length; i++) {
-          clients[i].sendUTF(json);
-        }
+          // Broadcast message to all connected clients.
+          var message = JSON.stringify({ type:'message', data: obj });
+          for (var i=0; i < clients.length; i++) {
+            clients[i].sendUTF(message);
+          }*/
+
+          var obj = {
+            player: json.player,
+            field: json.field,
+          };
+
+          // Broadcast message to all connected clients.
+          var message = JSON.stringify({ type:'field', data: obj });
+          for (var i=0; i < clients.length; i++) {
+            clients[i].sendUTF(message);
+          }
+        //}
       } catch(e) {
         // Store and broadcast username.
         if (userName === false) {
