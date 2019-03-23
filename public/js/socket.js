@@ -1,14 +1,13 @@
 $(function () {
   "use strict";
 
-  // Globals variables.
-  var card = document.getElementsByClassName("card")[0];
-  var containers = document.getElementsByClassName("container");
-
-  // To avoid searching in DOM.
+  // Global vaiables
+  var card = $("card")[0];
+  var containers = $("container");
   var content = $("#chat-history");
   var input = $("#input-field-bar");
   var status = $("#status");
+  var fieldSelect = $("#field-select")[0];
 
   // IP address of the server.
   var serverIP = "54.174.152.202";
@@ -16,21 +15,15 @@ $(function () {
   var socketPort = "1337";
   // Name flag and username sent.
   var myName = false;
-  var userName = "Unkown";
+  var userName = "Unknown";
   // Welcome message (first message displayed).
   var welcomeMessage = "Currently there are no active message channels. Use the textcard below to start chatting!";
   // Last recorded message.
   var message = "";
   // Flag to clear content or not on incoming message.
   var clearContent = true;
-  var myField = "";
-
-  // Initialize listeners for container objects.
-  for(var container of containers) {
-    container.addEventListener("dragover", dragover);
-    container.addEventListener("dragenter", dragenter);
-    container.addEventListener("drop", drop);
-  }
+  // Field object.
+  var fields = [];
 
   // Setup WebSocket.
   window.WebSocket = window.WebSocket || window.MozWebSocket;
@@ -47,6 +40,9 @@ $(function () {
 
   // Open the connection to the server.
   var connection = new WebSocket("ws://" + serverIP + ":" + socketPort);
+
+  // Add static listeners.
+  fieldSelect.addEventListener("change", changeFieldOptions);
 
   /* 
    * Functionality for a user that just joined.
@@ -96,10 +92,30 @@ $(function () {
       var text = json.data.text;
       if (myName === false) {
         var message = text.replace(" joined the server!", "");
-        text = "Welcome to the server! Your username is: " + message + ".";
+        text = "Welcome to the server! Your username is: " + message + ". To rename yourself, type 'My name is' followed by your name.";
         userName = message;
+        initializeNewField(userName);
+        fieldSelect.selectedIndex = 0;
         myName = true;
       }
+      else {
+        if(text.includes(" changed their name to ")) {
+          var filteredName = text.replace("<span style='color: #758fff'><b>", "").replace("</b></span>: ", "").replace("<b><em>", "").replace("</em></b>", "").replace(/^\s+|\s+$/g, "").replace("Server", "");
+          console.log("Filtered name: " + filteredName);
+          var parsedName = filteredName.split(" changed their name to ");
+          var newName = "TODO";
+          updateFieldName(player, newName);
+        }
+        else {
+          var player = text.replace(" joined the server!", "");
+          // Initialize new field for the joined player.
+          if(text.includes(" joined the server!") && player != userName) {
+            initializeNewField(player);
+          }
+        }
+      }
+
+      // Display message.
       message = prepareMessage("Server", text, new Date(json.data.time));
       stackMessage(message);
 
@@ -109,21 +125,39 @@ $(function () {
 
     // Update to a field.
     else if (json.type === "field") {
-      // Write field to screen.
       configureField(json.data.player, json.data.field);
     }
 
     // Single message.
     else if (json.type === "message") {
-      message = prepareMessage(json.data.author, json.data.text, new Date(json.data.time));
-      stackMessage(message);
-      status.text("");
-      input.removeAttr("disabled");
+      // Don't write messages that are name assignments.
+      if(!json.data.text.includes("My name is")) {
+        message = prepareMessage(json.data.author, json.data.text, new Date(json.data.time));
+        stackMessage(message);
+        status.text("");
+        input.removeAttr("disabled");
+      }
     }
 
     // Entire message history.
     else if (json.type === "history") {
-      for (var i = json.data.length - 1; i > 0; i--) {
+      for (var i = json.data.length - 1; i >= 0; i--) {
+        var text = json.data[i].text;
+        if(text.includes(" changed their name to ")) {
+          var filteredName = text.replace("<span style='color: #758fff'><b>", "").replace("</b></span>: ", "").replace("<b><em>", "").replace("</em></b>", "").replace(/^\s+|\s+$/g, "").replace("Server", "");
+          console.log("Filtered name: " + filteredName);
+          var parsedName = filteredName.split(" changed their name to ");
+          var newName = "TODO";
+          updateFieldName(player, newName);
+        }
+        else if(text.includes(" joined the server!")) {
+          var player = text.replace(" joined the server!", "");
+          // Initialize new field for the joined player.
+          if(player != userName) {
+            initializeNewField(player);
+          }
+        }
+
         message = prepareMessage(json.data[i].author, json.data[i].text, new Date(json.data[i].time));
         addMessage(message);
       }
@@ -216,6 +250,19 @@ $(function () {
   }
 
   /*
+   * Changes field options shown in field selector
+   */
+  function changeFieldOptions() {
+    var i, option;
+    for(i = 0; i < fieldSelect.length; i++) {
+      option = fieldSelect[i];
+      if (option.selected) {
+        loadField(option.value);
+      }
+    }
+  }
+
+  /*
    * Provide dragover callback.
    */
   function dragover(e) {
@@ -263,6 +310,7 @@ $(function () {
         message['cardName'] = this.childNodes[0].id;
       }
       message['field'] = field;
+      message['player'] = userName;
 
       connection.send(JSON.stringify(message));
     } catch(e) {
@@ -271,14 +319,25 @@ $(function () {
   }
 
   /*
-   * Overwrite a field with new data.
-   * @param player, the field to overwrite.
-   * @param field, the data for the field.
+   * Load field information to screen
+   * @param player, the indexed player for the field that should be loaded.
    */
-  function configureField(player, data) {
-    try {
-      for(var container of containers) {
-        if(data[container.id] != null) {
+  function loadField(player) {
+    for(var container of containers) {
+      // Initialize listeners if the field is yours.
+      if(player === userName) {
+        container.addEventListener("dragover", dragover);
+        container.addEventListener("dragenter", dragenter);
+        container.addEventListener("drop", drop);
+      }
+      else {
+        container.removeEventListener("dragover", dragover);
+        container.removeEventListener("dragenter", dragenter);
+        container.removeEventListener("drop", drop);
+      }
+
+      if(fields[player][container.id] != null) {
+        if(!fields[player][container.id].includes("hand") || player === userName) {
           // Clear child nodes.
           while(container.firstChild) {
             container.removeChild(container.firstChild);
@@ -287,7 +346,7 @@ $(function () {
           // Create base card div.
           var card = document.createElement("div");
           card.setAttribute("class", "card");
-          card.setAttribute("id", data[container.id]);
+          card.setAttribute("id", field[player][container.id]);
           card.setAttribute("draggable", "true");
 
           // Create child for image.
@@ -301,15 +360,82 @@ $(function () {
 
           console.log(container);
         }
-        else {
-          // Clear child nodes.
-          while(container.firstChild) {
-            container.removeChild(container.firstChild);
-          }
+      }
+      else {
+        // Clear child nodes.
+        while(container.firstChild) {
+          container.removeChild(container.firstChild);
+        }
+      }
+    }
+  }
+
+  /*
+   * Overwrite a field with new data.
+   * @param player, index of the field to overwrite.
+   * @param field, the data for the field.
+   */
+  function configureField(player, data) {
+    var field = {};
+    try {
+      for(var container of containers) {
+        if(data[container.id] != null) {
+          field[container.id] = data[container.id];
         }
       }
     } catch(e) {
       console.log('Error: ' + e);
     }
+    
+    fields[player] = field;
+    console.log(fields);
+  }
+
+  /*
+   * Replace the name of a player of a field.
+   * @param player, index of the field to overwrite.
+   * @param newName, the new name to use.
+   */
+  function updateFieldName(player, newName) {
+    fields[newName] = fields[player];
+    // TODO: remove old field.
+  }
+
+  /*
+   * Initialize field data for a given player index.
+   * @param player, index of the field to overwrite.
+   */
+  function initializeNewField(player) {
+    var field = {};
+    field['draw'] = '0*';
+    fields[player] = field;
+    console.log(fields);
+
+    // Update field selection.
+    var option = document.createElement("option");
+    if(player === userName) {
+      option.text += "Your Field";
+    }
+    else {
+      option.text += player + "'s Field";
+    }
+    option.value = player;
+    if(player === userName) {
+      // Prepend option.
+      fieldSelect.options.add(option, fieldSelect.options[0]);
+    }
+    else {
+      // Add option after first.
+      fieldSelect.options.add(option, fieldSelect.options[1]);
+    }
+
+    // Initialize listeners if the field is yours.
+    if(player === userName) {
+      for(var container of containers) {
+        container.addEventListener("dragover", dragover);
+        container.addEventListener("dragenter", dragenter);
+        container.addEventListener("drop", drop);
+      }
+    } 
   }
 });

@@ -89,7 +89,7 @@ wsServer.on('request', function(request) {
 
   // Initialize client variables.
   var index = clients.push(connection) - 1;
-  var userName = false;
+  var userName = null;
   console.log((new Date()) + ' Connection accepted.');
 
   // Send message callback.
@@ -129,7 +129,7 @@ wsServer.on('request', function(request) {
         //}
       } catch(e) {
         // Store and broadcast username.
-        if (userName === false) {
+        if (userName == null) {
           // Store username
           numUsers++;
           userName = "User" + numUsers;
@@ -142,25 +142,25 @@ wsServer.on('request', function(request) {
             author: "Server",
           };
           history.push(obj);
-          history = history.slice(-100);
 
           // Broadcast message to all connected clients.
           var json = JSON.stringify({ type:'name', data: obj });
           for (var i=0; i < clients.length; i++) {
             clients[i].sendUTF(json);
           }
-        }
 
-        // Drop if this is a handshake.
-        if(message.utf8Data === "Handshake") {
-          return;
+          // Drop if this is a handshake (it should be)
+          if(message.utf8Data === "Handshake") {
+            return;
+          }
         }
 
         // Possibly update name.
         if(message.utf8Data.includes("My name is ")) {
           // Undo preparation of string.
           console.log(message.utf8Data);
-          var newName = message.utf8Data.replace("My name is ", "").replace("<span style='color: #758fff'><b>", "").replace("</b></span>: ", "").replace("<b><em>", "").replace("</em></b>", "").replace(/^\s+|\s+$/g, "").substring(0, 16);
+          var parsedName = message.utf8Data.split("My name is");
+          var newName = parsedName[parsedName.length - 1].replace("My name is ", "").replace("<span style='color: #758fff'><b>", "").replace("</b></span>: ", "").replace("<b><em>", "").replace("</em></b>", "").replace(/^\s+|\s+$/g, "").substring(0, 16);
 
           // Update history list.
           var obj = {
@@ -169,10 +169,9 @@ wsServer.on('request', function(request) {
             author: "Server",
           };
           history.push(obj);
-          history = history.slice(-100);
 
           // Broadcast message to all connected clients.
-          var json = JSON.stringify({ type:'message', data: obj });
+          var json = JSON.stringify({ type:'name', data: obj });
           for (var i=0; i < clients.length; i++) {
             clients[i].sendUTF(json);
           }
@@ -181,23 +180,23 @@ wsServer.on('request', function(request) {
           userName = newName;
           console.log("Changed name to " + newName);
         }
+        else {
+          // Log and broadcast the message.
+          console.log((new Date()) + ' Received Message from ' + userName + ': ' + message.utf8Data);
+          
+          // Update history list.
+          var obj = {
+            time: (new Date()).getTime(),
+            text: message.utf8Data,
+            author: userName,
+          };
+          history.push(obj);
 
-        // Log and broadcast the message.
-        console.log((new Date()) + ' Received Message from ' + userName + ': ' + message.utf8Data);
-        
-        // Update history list.
-        var obj = {
-          time: (new Date()).getTime(),
-          text: message.utf8Data,
-          author: userName,
-        };
-        history.push(obj);
-        history = history.slice(-100);
-
-        // Broadcast message to all connected clients.
-        var json = JSON.stringify({ type:'message', data: obj });
-        for (var i=0; i < clients.length; i++) {
-          clients[i].sendUTF(json);
+          // Broadcast message to all connected clients.
+          var json = JSON.stringify({ type:'message', data: obj });
+          for (var i=0; i < clients.length; i++) {
+            clients[i].sendUTF(json);
+          }
         }
       }
     }
@@ -205,7 +204,7 @@ wsServer.on('request', function(request) {
 
   // Client disconnect callback.
   connection.on('close', function(connection) {
-    if (userName !== false) {
+    if (userName != null) {
       console.log((new Date()) + " Peer " + connection.remoteAddress + " disconnected.");
       clients.splice(index, 1);
     }
@@ -213,6 +212,7 @@ wsServer.on('request', function(request) {
 
   // Send back chat history as JSON.
   if (history.length > 0) {
-    connection.sendUTF(JSON.stringify({ type: 'history', data: history} ));
+    console.log(history);
+    connection.sendUTF(JSON.stringify({ type: 'history', data: history }));
   }
 });
