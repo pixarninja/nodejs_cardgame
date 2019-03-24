@@ -3,7 +3,7 @@ $(function () {
 
   // Global vaiables
   var card = $("card")[0];
-  var containers = $("container");
+  var containers = $(".container");
   var content = $("#chat-history");
   var input = $("#input-field-bar");
   var status = $("#status");
@@ -95,6 +95,7 @@ $(function () {
         text = "Welcome to the server! Your username is: " + message + ". To rename yourself, type 'My name is' followed by your name.";
         userName = message;
         initializeNewField(userName);
+        loadField(userName);
         fieldSelect.selectedIndex = 0;
         myName = true;
       }
@@ -108,6 +109,7 @@ $(function () {
         }
         else {
           var player = text.replace(" joined the server!", "");
+
           // Initialize new field for the joined player.
           if(text.includes(" joined the server!") && player != userName) {
             initializeNewField(player);
@@ -115,7 +117,7 @@ $(function () {
         }
       }
 
-      // Display message.
+      //Display message.
       message = prepareMessage("Server", text, new Date(json.data.time));
       stackMessage(message);
 
@@ -126,6 +128,15 @@ $(function () {
     // Update to a field.
     else if (json.type === "field") {
       configureField(json.data.player, json.data.field);
+
+      // Load the field to the screen if it's currently being viewed.
+      var i, option;
+      for(i = 0; i < fieldSelect.length; i++) {
+        option = fieldSelect[i];
+        if (option.selected && option.value == json.data.player) {
+          loadField(option.value);
+        }
+      }
     }
 
     // Single message.
@@ -306,8 +317,12 @@ $(function () {
       // Send updated JSON through WebSocket.
       var message = {};
       if(!this.id.includes("hand")) {
-        message['position'] = this.id.replace("-", " ").replace("slot", "Slot");
+        message['position'] = this.id.replace("-", " ").replace("slot", "Mat Slot");
         message['cardName'] = this.childNodes[0].id;
+      }
+      else {
+        message['position'] = this.id.replace("-", " ").replace("hand", "Hand Slot");
+        message['cardName'] = "0*";
       }
       message['field'] = field;
       message['player'] = userName;
@@ -323,9 +338,10 @@ $(function () {
    * @param player, the indexed player for the field that should be loaded.
    */
   function loadField(player) {
+    console.log(containers);
     for(var container of containers) {
       // Initialize listeners if the field is yours.
-      if(player === userName) {
+      if(player == userName && container.id != "discard") {
         container.addEventListener("dragover", dragover);
         container.addEventListener("dragenter", dragenter);
         container.addEventListener("drop", drop);
@@ -336,30 +352,30 @@ $(function () {
         container.removeEventListener("drop", drop);
       }
 
-      if(fields[player][container.id] != null) {
-        if(!fields[player][container.id].includes("hand") || player === userName) {
-          // Clear child nodes.
-          while(container.firstChild) {
-            container.removeChild(container.firstChild);
-          }
-
-          // Create base card div.
-          var card = document.createElement("div");
-          card.setAttribute("class", "card");
-          card.setAttribute("id", field[player][container.id]);
-          card.setAttribute("draggable", "true");
-
-          // Create child for image.
-          var img = document.createElement("img");
-          img.setAttribute("src", "");
-          img.setAttribute("id", "playing-card");
-
-          // Build tree.
-          card.appendChild(img);
-          container.appendChild(card);
-
-          console.log(container);
+      var field = fields[player];
+      if(field != null && field[container.id] != null) {
+        // Clear child nodes.
+        while(container.firstChild) {
+          container.removeChild(container.firstChild);
         }
+
+        // Create base card div.
+        var card = document.createElement("div");
+        card.setAttribute("class", "card");
+        card.setAttribute("id", field[container.id]);
+        card.setAttribute("draggable", "true");
+
+        // Create child for image.
+        var img = document.createElement("img");
+        img.setAttribute("src", "");
+        img.setAttribute("id", "playing-card");
+
+        // Build tree.
+        card.appendChild(img);
+        container.appendChild(card);
+
+        console.log("LoadField(" + player + ")");
+        console.log(container);
       }
       else {
         // Clear child nodes.
@@ -436,6 +452,6 @@ $(function () {
         container.addEventListener("dragenter", dragenter);
         container.addEventListener("drop", drop);
       }
-    } 
+    }
   }
 });

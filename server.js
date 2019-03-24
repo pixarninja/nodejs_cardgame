@@ -59,9 +59,9 @@ httpServer.get('/footer.html', function (req, res) {
 httpServer.get('/main.css', function (req, res) {
   res.sendFile(__dirname + '/main.css');
 });
-httpServer.get('/card.jpg', function (req, res) {
+httpServer.get('/images/card.jpg', function (req, res) {
   res.type('image/jpg');
-  res.sendFile(__dirname + '/card.jpg');
+  res.sendFile(__dirname + 'images/card.jpg');
 });
 
 // Start HTTP Server.
