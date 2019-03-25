@@ -2,7 +2,7 @@ $(function () {
   "use strict";
 
   // Global vaiables
-  var card = $("card")[0];
+  var card = null; // Placeholder.
   var containers = $(".container");
   var content = $("#chat-history");
   var input = $("#input-field-bar");
@@ -98,14 +98,24 @@ $(function () {
         loadField(userName);
         fieldSelect.selectedIndex = 0;
         myName = true;
+
+        // Replace name in header.
+        document.getElementById("user-id").innerHTML = userName;
       }
       else {
         if(text.includes(" changed their name to ")) {
           var filteredName = text.replace("<span style='color: #758fff'><b>", "").replace("</b></span>: ", "").replace("<b><em>", "").replace("</em></b>", "").replace(/^\s+|\s+$/g, "").replace("Server", "");
           console.log("Filtered name: " + filteredName);
           var parsedName = filteredName.split(" changed their name to ");
-          var newName = "TODO";
-          updateFieldName(player, newName);
+          var newName = parsedName[parsedName.length - 1];
+          var oldName = parsedName[0];
+          updateFieldName(oldName, newName); // TODO: make sure it is called for all players.
+
+          if(oldName === userName) {
+            // Replace name in header.
+            document.getElementById("user-id").innerHTML = newName;
+            userName = newName;
+          }
         }
         else {
           var player = text.replace(" joined the server!", "");
@@ -113,6 +123,11 @@ $(function () {
           // Initialize new field for the joined player.
           if(text.includes(" joined the server!") && player != userName) {
             initializeNewField(player);
+
+            // Send player's field data to the joined player.
+            console.log("Sending field!");
+            message = JSON.stringify({ field: fields[userName], player: userName });
+            connection.send(message);
           }
         }
       }
@@ -158,8 +173,9 @@ $(function () {
           var filteredName = text.replace("<span style='color: #758fff'><b>", "").replace("</b></span>: ", "").replace("<b><em>", "").replace("</em></b>", "").replace(/^\s+|\s+$/g, "").replace("Server", "");
           console.log("Filtered name: " + filteredName);
           var parsedName = filteredName.split(" changed their name to ");
-          var newName = "TODO";
-          updateFieldName(player, newName);
+          var newName = parsedName[parsedName.length - 1];
+          var oldName = parsedName[0];
+          updateFieldName(oldName, newName);
         }
         else if(text.includes(" joined the server!")) {
           var player = text.replace(" joined the server!", "");
@@ -287,20 +303,50 @@ $(function () {
   function dragenter(e) {
     e.preventDefault();
     e.stopPropagation();
+    console.log(e.target.parentNode.id);
+    if(e.target.parentNode.id == "container-parent") {
+      e.target.parentNode.style.background = "#24282c";
+    }
+  }
+
+  /*
+   * Provide dragenter callback.
+   */
+  function dragleave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if(e.target.parentNode.id == "container-parent") {
+      e.target.parentNode.style.background = "";
+    }
+  }
+
+  /*
+   * Provide dragstart callback.
+   */
+  function dragstart(e) {
+    card = document.getElementById(e.target.parentNode.id);
+  }
+
+  /*
+   * Provide dragend callback.
+   */
+  function dragend(e) {
+    if(e.target.parentNode.parentNode.parentNode.id == "container-parent") {
+      e.target.parentNode.parentNode.parentNode.style.background = "";
+    }
   }
   
   /*
    * Provide drop callback.
    */
   function drop() {
-    // Clear child nodes and find card again.
-    card = document.getElementsByClassName("card")[0]; // TODO: add more cards...
+    // Clear child nodes of card's parent.
     var parentNode = card.parentNode;
     while(parentNode.firstChild) {
       parentNode.removeChild(parentNode.firstChild);
     }
 
-    // Append the card node.
+    // Append the card node as new child.
     this.append(card);
 
     try{
@@ -313,6 +359,7 @@ $(function () {
           field[container.id] = child.id;
         }
       }
+      fields[userName] = field;
 
       // Send updated JSON through WebSocket.
       var message = {};
@@ -338,18 +385,39 @@ $(function () {
    * @param player, the indexed player for the field that should be loaded.
    */
   function loadField(player) {
-    console.log(containers);
     for(var container of containers) {
       // Initialize listeners if the field is yours.
-      if(player == userName && container.id != "discard") {
-        container.addEventListener("dragover", dragover);
-        container.addEventListener("dragenter", dragenter);
-        container.addEventListener("drop", drop);
-      }
-      else {
+      if(player != userName) { // Remove all interaction.
         container.removeEventListener("dragover", dragover);
         container.removeEventListener("dragenter", dragenter);
+        container.removeEventListener("dragleave", dragleave);
+        container.removeEventListener("dragstart", dragstart);
+        container.removeEventListener("dragend", dragend);
         container.removeEventListener("drop", drop);
+      }
+      else if(container.id == "discard") { // Only drag into.
+        container.removeEventListener("dragover", dragover);
+        container.addEventListener("dragenter", dragenter);
+        container.addEventListener("dragleave", dragleave);
+        container.removeEventListener("dragstart", dragstart);
+        container.removeEventListener("dragend", dragend);
+        container.addEventListener("drop", drop);
+      }
+      else if(container.id == "draw") { // Only click.
+        container.removeEventListener("dragover", dragover);
+        container.removeEventListener("dragenter", dragenter);
+        container.removeEventListener("dragleave", dragleave);
+        container.addEventListener("dragstart", dragstart);
+        container.removeEventListener("dragend", dragend);
+        container.removeEventListener("drop", drop);
+      }
+      else { // Default: all except click.
+        container.addEventListener("dragover", dragover);
+        container.addEventListener("dragenter", dragenter);
+        container.addEventListener("dragleave", dragleave);
+        container.addEventListener("dragstart", dragstart);
+        container.addEventListener("dragend", dragend);
+        container.addEventListener("drop", drop);
       }
 
       var field = fields[player];
@@ -413,8 +481,17 @@ $(function () {
    * @param newName, the new name to use.
    */
   function updateFieldName(player, newName) {
-    fields[newName] = fields[player];
     // TODO: remove old field.
+    fields[newName] = fields[player];
+
+    var i, option;
+    for(i = 0; i < fieldSelect.length; i++) {
+      option = fieldSelect[i];
+      if (option.value == player && player != userName) {
+        option.value = newName;
+        option.text += newName + "'s Field";
+      }
+    }
   }
 
   /*
@@ -450,6 +527,7 @@ $(function () {
       for(var container of containers) {
         container.addEventListener("dragover", dragover);
         container.addEventListener("dragenter", dragenter);
+        container.addEventListener("dragstart", dragstart);
         container.addEventListener("drop", drop);
       }
     }
