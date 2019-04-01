@@ -8,11 +8,14 @@ $(function () {
   var input = $("#input-field-bar");
   var status = $("#status");
   var fieldSelect = $("#field-select")[0];
-  var deck = [ "card-blank", "card-1c", "card-2c",  "3c", "card-4c", "card-5c", "card-6c", "card-7c", "card-8c", "card-9c", "card-10c", "card-jc", "card-qc", "card-kc",
+  var deck = [ "card-1c", "card-2c",  "3c", "card-4c", "card-5c", "card-6c", "card-7c", "card-8c", "card-9c", "card-10c", "card-jc", "card-qc", "card-kc",
       "card-1d", "card-2d",  "3d", "card-4d", "card-5d", "card-6d", "card-7d", "card-8d", "card-9d", "card-10d", "card-jd", "card-qd", "card-kd",
       "card-1h", "card-2h",  "3h", "card-4h", "card-5h", "card-6h", "card-7h", "card-8h", "card-9h", "card-10h", "card-jh", "card-qh", "card-kh",
       "card-1s", "card-2s",  "3s", "card-4s", "card-5s", "card-6s", "card-7s", "card-8s", "card-9s", "card-10s", "card-js", "card-qs", "card-ks"];
   deck.sort(function(a,b) { return Math.random() > 0.5; } );
+  var drawIndex = 0;
+  var drawCount = 52;
+  var discardCount = 0;
 
   // IP address of the server.
   var serverIP = "54.174.152.202";
@@ -101,6 +104,8 @@ $(function () {
         userName = message;
         initializeNewField(userName);
         loadField(userName);
+        console.log("Loaded Field:");
+        console.log(fields[userName]);
         fieldSelect.selectedIndex = 0;
         myName = true;
 
@@ -361,8 +366,18 @@ $(function () {
    * Provide drop callback.
    */
   function drop() {
-    // Clear child nodes of card's parent.
+    for(var container of containers) {
+      // Ensure background was changed back.
+      container.parentNode.style.background = "";
+    }
+
+    // Return without changing anything if the discard pile is dragged from.
     var parentNode = card.parentNode;
+    if(parentNode == null) {
+      return;
+    }
+
+    // Clear all descendents of card's parent.
     while(parentNode.firstChild) {
       parentNode.removeChild(parentNode.firstChild);
     }
@@ -373,13 +388,26 @@ $(function () {
     try{
       // Store field data as JSON
       var field = {};
+      var child;
       for(var container of containers) {
-        var child = container.childNodes[0];
-        if(child != null && child.childNodes[0] != null) {
+        // Process child (the card image parent).
+        child = container.childNodes[0];
+        if(child != null) {
+          var entry = {};
+          if(container.id == "discard") {
+            discardCount++;
+            entry['count'] = discardCount;
+          }
+          else if(container.id == "draw") {
+            entry['count'] = drawCount;
+          }
+
+          // Process grandchild (the card image).
           child = child.childNodes[0];
-          console.log(child);
-          var entry = { id: child.id };
-          field[container.id] = entry;
+          if(child != null) {
+            entry['id'] = child.id;
+            field[container.id] = entry;
+          }
         }
       }
       fields[userName] = field;
@@ -409,6 +437,14 @@ $(function () {
    */
   function loadField(player) {
     for(var container of containers) {
+      // Reset draw and discard counts.
+      if(container.id == "discard") {
+        document.getElementById("discard-count").innerHTML = "(0)";
+      }
+      else if(container.id == "draw") {
+        document.getElementById("draw-count").innerHTML = "(0)";
+      }
+
       // Initialize listeners if the field is yours.
       if(player != userName) { // Remove all interaction.
         container.removeEventListener("dragover", dragover);
@@ -419,14 +455,14 @@ $(function () {
         container.removeEventListener("drop", drop);
       }
       else if(container.id == "discard") { // Only drag into.
-        container.removeEventListener("dragover", dragover);
+        container.addEventListener("dragover", dragover);
         container.addEventListener("dragenter", dragenter);
         container.addEventListener("dragleave", dragleave);
         container.removeEventListener("dragstart", dragstart);
-        container.removeEventListener("dragend", dragend);
+        container.addEventListener("dragend", dragend);
         container.addEventListener("drop", drop);
       }
-      else if(container.id == "draw") { // Only click.
+      else if(container.id == "draw") { // TODO: Only click.
         container.removeEventListener("dragover", dragover);
         container.removeEventListener("dragenter", dragenter);
         container.removeEventListener("dragleave", dragleave);
@@ -445,9 +481,9 @@ $(function () {
 
       var field = fields[player];
       if(field != null && field[container.id] != null) {
-        // Error if the field is not already blank.
-        if(container.firstChild) {
-          return
+        // Clear all descendents of card's parent.
+        while(container.firstChild) {
+          container.removeChild(container.firstChild);
         }
 
         // Create base card div.
@@ -466,11 +502,11 @@ $(function () {
         container.appendChild(entry);
 
         // Find label and possibly update it.
-        var label = container.parentNode.childNodes[2];
-        if(label.id == "discard-count") {
-          var count = label.text.substring(1, label.text.length - 2);
-          count += 1;
-          label.text = "(" + count + ")";
+        if(container.id == "discard") {
+          document.getElementById("discard-count").innerHTML = "(" + field[container.id]['count'] + ")";
+        }
+        else if(container.id == "draw") {
+          document.getElementById("draw-count").innerHTML = "(" + field[container.id]['count'] + ")";
         }
       }
       else {
@@ -531,7 +567,7 @@ $(function () {
    */
   function initializeNewField(player) {
     var field = {};
-    var entry = { id: 'card-blank' };
+    var entry = { id: 'card-blank', count: drawCount };
     field['draw'] = entry;
     fields[player] = field;
 
