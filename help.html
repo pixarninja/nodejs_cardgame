@@ -8,7 +8,7 @@
     <link rel="shortcut icon" href="images/webicon.ico" type="image/x-icon">
     <link rel="icon" href="images/webicon.ico" type="image/x-icon">
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="main.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css?family=Quicksand|Poiret+One" rel="stylesheet">
     <form id="index-form" action="/index.html" method="GET">
@@ -16,7 +16,26 @@
   </head>
   <body style="background: black;">
     <div class="container-fluid">
-      <div id="header"></div>
+      <form id="index-form" action="/index.html" method="GET">
+      </form>
+      <form id="help-form" action="/help.html" method="GET">
+      </form>
+      <div>
+        <nav class="navbar navbar-default navbar-fixed-top">
+          <div class="container-fluid">
+            <div class="col-xs-12">
+              <!-- Navbar -->
+              <div id="custom-navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav" style="padding-bottom: 15px;padding-top: 5px;padding-left: 3px;">
+                  <button type="button" class="btn btn-lg" title="Play Mat Home" onclick="document.getElementById('index-form').submit();">
+                    Play<span class="glyphicon glyphicon-knight" id="large-icon"></span>Mat
+                  </button>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
       <div class="row" align="left">
         <!-- Content -->
         <div id="content" class="row">
@@ -35,10 +54,10 @@
               <h2>How To<hr></h2>
               <h4>
                 <p>
-                  The game is implemented on <a href="http://54.174.152.202/">Play Mat</a> home page (port 80). WebSockets are instantiated as needed, for as many games as are going on. The chat message box you see to the right of the game page is tied to each game; players may communicate with each other there. If you would like to rename yourself in the chat server, you can do so by typing 'I am ' followed by your new name.
+                  The game is implemented on <a href="http://54.174.152.202/">Play Mat</a> home page (port 80). WebSockets are instantiated as needed, for as many games as are going on. The chat message box you see to the right of the game page is tied to each game; players may communicate with each other there. If you would like to rename yourself in the chat server, you can do so by typing 'My name is ' followed by your new name.
                 </p>
                 <p>
-                  Players may join a game as an observer or player, or may start a new game if they wish. This dicision will be available from the <a href="http://54.174.152.202/matchmaking.html">Match Making</a> link in the menu.
+                  Players may join a game as an observer or player, or may start a new game if they wish. This decision will be available from the <a href="http://54.174.152.202/matchmaking.html">Match Making</a> link in the menu.
                 </p>
                 <br>
               </h4>

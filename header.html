@@ -1,6 +1,6 @@
 <form id="index-form" action="/index.html" method="GET">
 </form>
-<form id="help-form" action="/help.html" method="GET">
+<form id="help-form" action="/help.html" method="GET" target="_blank">
 </form>
 <div>
   <nav class="navbar navbar-default navbar-fixed-top">
@@ -12,7 +12,7 @@
             <button type="button" class="btn btn-lg" title="Play Mat Home" onclick="document.getElementById('index-form').submit();">
               Play<span class="glyphicon glyphicon-knight" id="large-icon"></span>Mat
             </button>
-            <button type="button" class="btn btn-lg" title="Help" target="_blank" onclick="document.getElementById('help-form').submit();">
+            <button type="button" class="btn btn-lg" title="Help" onclick="document.getElementById('help-form').submit();">
               <span class="glyphicon glyphicon-info-sign" id="large-icon"></span>&nbsp;&nbsp;Help
             </button>
           </ul>

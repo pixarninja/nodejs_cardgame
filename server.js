@@ -56,8 +56,8 @@ httpServer.get('/header.html', function (req, res) {
 httpServer.get('/footer.html', function (req, res) {
   res.sendFile(__dirname + '/footer.html');
 });
-httpServer.get('/main.css', function (req, res) {
-  res.sendFile(__dirname + '/main.css');
+httpServer.get('/card.css', function (req, res) {
+  res.sendFile(__dirname + '/card.css');
 });
 httpServer.get('/images/card.jpg', function (req, res) {
   res.type('image/jpg');
@@ -169,6 +169,24 @@ wsServer.on('request', function(request) {
           };
           history.push(obj);
 
+          // Update server's history with name change.
+          for(var i = 0; i < history.length; i++) {
+            if(history[i].author == "Server" && history[i].text.includes(userName) && !history[i].text.includes(" changed their name to ")) {
+              console.log("Old: " + history[i].text);
+              history[i].text = history[i].text.replace(userName, newName);
+              console.log("New: " + history[i].text);
+            }
+            if(history[i].author == userName) {
+              history[i].author = newName;
+            }
+          }
+
+          // Broadcast updated history to all connected clients.
+          var json = JSON.stringify({ type:'history', data: history });
+          for (var i=0; i < clients.length; i++) {
+            clients[i].sendUTF(json);
+          }
+
           // Broadcast message to all connected clients.
           var json = JSON.stringify({ type:'name', data: obj });
           for (var i=0; i < clients.length; i++) {
@@ -206,6 +224,25 @@ wsServer.on('request', function(request) {
     if (userName != null) {
       console.log((new Date()) + " Peer " + connection.remoteAddress + " disconnected.");
       clients.splice(index, 1);
+
+      // Update history by removing client's data.
+      for(var i = history.length - 1; i >= 0; i--) {
+        if(history[i].author == userName || (history[i].author == "Server" && history[i].text.includes(userName))) {
+          history.splice(i, 1);
+        }
+      }
+      var obj = {
+        time: (new Date()).getTime(),
+        text: userName + " left the server!",
+        author: "Server",
+      };
+      history.push(obj);
+
+      // Broadcast new history to all connected clients.
+      var json = JSON.stringify({ type:'history', data: history });
+      for (var i=0; i < clients.length; i++) {
+        clients[i].sendUTF(json);
+      }
     }
   });
 
