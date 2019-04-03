@@ -8,7 +8,7 @@ $(function () {
   var input = $("#input-field-bar");
   var status = $("#status");
   var fieldSelect = $("#field-select")[0];
-  var deck = [ "card-1c", "card-2c",  "3c", "card-4c", "card-5c", "card-6c", "card-7c", "card-8c", "card-9c", "card-10c", "card-jc", "card-qc", "card-kc",
+  var deck = [ "card-1c", "card-2c",  "card-3c", "card-4c", "card-5c", "card-6c", "card-7c", "card-8c", "card-9c", "card-10c", "card-jc", "card-qc", "card-kc",
       "card-1d", "card-2d",  "3d", "card-4d", "card-5d", "card-6d", "card-7d", "card-8d", "card-9d", "card-10d", "card-jd", "card-qd", "card-kd",
       "card-1h", "card-2h",  "3h", "card-4h", "card-5h", "card-6h", "card-7h", "card-8h", "card-9h", "card-10h", "card-jh", "card-qh", "card-kh",
       "card-1s", "card-2s",  "3s", "card-4s", "card-5s", "card-6s", "card-7s", "card-8s", "card-9s", "card-10s", "card-js", "card-qs", "card-ks"];
@@ -316,6 +316,99 @@ $(function () {
     }
   }
 
+  /* 
+   * Provide click callback for draw pile.
+   */
+  function click() {
+    // If there is no card to draw, return without changing anything.
+    if(document.getElementById("draw").childNodes[0] == null) {
+      return;
+    }
+
+    // Create base card div.
+    var newCard = document.createElement("div");
+    newCard.setAttribute("class", "card");
+    newCard.setAttribute("id", "card");
+    newCard.setAttribute("draggable", "true");
+
+    // Create child for image.
+    var img = document.createElement("img");
+    img.setAttribute("id", deck[52 - drawCount]);
+    img.setAttribute("src", "");
+
+    // Build tree.
+    newCard.appendChild(img);
+
+    // Find the first empty hand slot and add the card.
+    var found = false;
+    var handContainers = $("div[id*='hand']");
+    console.log(handContainers);
+    for(var container of handContainers) {
+      if(!container.firstChild) {
+        container.appendChild(newCard);
+        found = true;
+        break;
+      }
+    }
+
+    // If no spot exists, return without changing anything.
+    if(!found) {
+      return;
+    }
+
+    drawCount -= 1;
+
+    try{
+      // Store field data as JSON
+      var field = {};
+      var child;
+      for(var container of containers) {
+        // Process child (the card image parent).
+        child = container.childNodes[0];
+        if(child != null) {
+          var entry = {};
+          if(container.id == "discard") {
+            discardCount++;
+            entry['count'] = discardCount;
+          }
+          else if(container.id == "draw") {
+            if(drawCount < 0) {
+              entry['count'] = 0;
+            }
+            else {
+              entry['count'] = drawCount;
+            }
+          }
+
+          // Process grandchild (the card image).
+          child = child.childNodes[0];
+          if(child != null) {
+            entry['id'] = child.id;
+            field[container.id] = entry;
+          }
+        }
+      }
+      fields[userName] = field;
+
+      // Send updated JSON through WebSocket.
+      var message = {};
+      if(!this.id.includes("hand")) {
+        message['position'] = this.id.replace("-", " ").replace("slot", "Mat Slot");
+        message['cardName'] = this.childNodes[0].id;
+      }
+      else {
+        message['position'] = this.id.replace("-", " ").replace("hand", "Hand Slot");
+        message['cardName'] = "card-blank";
+      }
+      message['field'] = field;
+      message['player'] = userName;
+
+      connection.send(JSON.stringify(message));
+    } catch(e) {
+      console.log('Error: ' + e);
+    }
+  }
+
   /*
    * Provide dragover callback.
    */
@@ -371,11 +464,11 @@ $(function () {
       container.parentNode.style.background = "";
     }
 
-    // Return without changing anything if the discard pile is dragged from.
-    var parentNode = card.parentNode;
-    if(parentNode == null) {
+    // Return without changing anything if the discard or draw piles are dragged from.
+    if(card == null || card.parentNode == null) {
       return;
     }
+    var parentNode = card.parentNode;
 
     // Clear all descendents of card's parent.
     while(parentNode.firstChild) {
@@ -447,6 +540,7 @@ $(function () {
 
       // Initialize listeners if the field is yours.
       if(player != userName) { // Remove all interaction.
+        container.removeEventListener("click", click);
         container.removeEventListener("dragover", dragover);
         container.removeEventListener("dragenter", dragenter);
         container.removeEventListener("dragleave", dragleave);
@@ -455,6 +549,7 @@ $(function () {
         container.removeEventListener("drop", drop);
       }
       else if(container.id == "discard") { // Only drag into.
+        container.removeEventListener("click", click);
         container.addEventListener("dragover", dragover);
         container.addEventListener("dragenter", dragenter);
         container.addEventListener("dragleave", dragleave);
@@ -463,14 +558,16 @@ $(function () {
         container.addEventListener("drop", drop);
       }
       else if(container.id == "draw") { // TODO: Only click.
+        container.addEventListener("click", click);
         container.removeEventListener("dragover", dragover);
         container.removeEventListener("dragenter", dragenter);
         container.removeEventListener("dragleave", dragleave);
-        container.addEventListener("dragstart", dragstart);
+        container.removeEventListener("dragstart", dragstart);
         container.removeEventListener("dragend", dragend);
         container.removeEventListener("drop", drop);
       }
       else { // All except click.
+        container.removeEventListener("click", click);
         container.addEventListener("dragover", dragover);
         container.addEventListener("dragenter", dragenter);
         container.addEventListener("dragleave", dragleave);
@@ -484,6 +581,11 @@ $(function () {
         // Clear all descendents of card's parent.
         while(container.firstChild) {
           container.removeChild(container.firstChild);
+        }
+
+        // Check if the deck card should not be recreated.
+        if(container.id == "draw" && field[container.id]['count'] <= 0) {
+          continue;
         }
 
         // Create base card div.

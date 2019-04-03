@@ -59,9 +59,219 @@ httpServer.get('/footer.html', function (req, res) {
 httpServer.get('/card.css', function (req, res) {
   res.sendFile(__dirname + '/card.css');
 });
-httpServer.get('/images/card.jpg', function (req, res) {
+
+// Handle serving card images.
+httpServer.get('/images/card-blank.jpg', function (req, res) {
   res.type('image/jpg');
-  res.sendFile(__dirname + 'images/card.jpg');
+  res.sendFile(__dirname + '/images/card-blank.jpg');
+});
+httpServer.get('/images/card-1c.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-1c.jpg');
+});
+httpServer.get('/images/card-2c.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-2c.jpg');
+});
+httpServer.get('/images/card-3c.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-3c.jpg');
+});
+httpServer.get('/images/card-4c.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-4c.jpg');
+});
+httpServer.get('/images/card-5c.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-5c.jpg');
+});
+httpServer.get('/images/card-6c.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-6c.jpg');
+});
+httpServer.get('/images/card-7c.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-7c.jpg');
+});
+httpServer.get('/images/card-8c.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-8c.jpg');
+});
+httpServer.get('/images/card-9c.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-9c.jpg');
+});
+httpServer.get('/images/card-10c.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-10c.jpg');
+});
+httpServer.get('/images/card-jc.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-jc.jpg');
+});
+httpServer.get('/images/card-qc.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-qc.jpg');
+});
+httpServer.get('/images/card-kc.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-kc.jpg');
+});
+httpServer.get('/images/card-1d.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-1d.jpg');
+});
+httpServer.get('/images/card-2d.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-2d.jpg');
+});
+httpServer.get('/images/3d.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/3d.jpg');
+});
+httpServer.get('/images/card-4d.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-4d.jpg');
+});
+httpServer.get('/images/card-5d.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-5d.jpg');
+});
+httpServer.get('/images/card-6d.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-6d.jpg');
+});
+httpServer.get('/images/card-7d.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-7d.jpg');
+});
+httpServer.get('/images/card-8d.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-8d.jpg');
+});
+httpServer.get('/images/card-9d.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-9d.jpg');
+});
+httpServer.get('/images/card-10d.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-10d.jpg');
+});
+httpServer.get('/images/card-jd.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-jd.jpg');
+});
+httpServer.get('/images/card-qd.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-qd.jpg');
+});
+httpServer.get('/images/card-kd.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-kd.jpg');
+});
+httpServer.get('/images/card-1h.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-1h.jpg');
+});
+httpServer.get('/images/card-2h.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-2h.jpg');
+});
+httpServer.get('/images/3h.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/3h.jpg');
+});
+httpServer.get('/images/card-4h.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-4h.jpg');
+});
+httpServer.get('/images/card-5h.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-5h.jpg');
+});
+httpServer.get('/images/card-6h.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-6h.jpg');
+});
+httpServer.get('/images/card-7h.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-7h.jpg');
+});
+httpServer.get('/images/card-8h.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-8h.jpg');
+});
+httpServer.get('/images/card-9h.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-9h.jpg');
+});
+httpServer.get('/images/card-10h.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-10h.jpg');
+});
+httpServer.get('/images/card-jh.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-jh.jpg');
+});
+httpServer.get('/images/card-qh.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-qh.jpg');
+});
+httpServer.get('/images/card-kh.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-kh.jpg');
+});
+httpServer.get('/images/card-1s.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-1s.jpg');
+});
+httpServer.get('/images/card-2s.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-2s.jpg');
+});
+httpServer.get('/images/3s.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/3s.jpg');
+});
+httpServer.get('/images/card-4s.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-4s.jpg');
+});
+httpServer.get('/images/card-5s.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-5s.jpg');
+});
+httpServer.get('/images/card-6s.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-6s.jpg');
+});
+httpServer.get('/images/card-7s.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-7s.jpg');
+});
+httpServer.get('/images/card-8s.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-8s.jpg');
+});
+httpServer.get('/images/card-9s.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-9s.jpg');
+});
+httpServer.get('/images/card-10s.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-10s.jpg');
+});
+httpServer.get('/images/card-js.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-js.jpg');
+});
+httpServer.get('/images/card-qs.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-qs.jpg');
+});
+httpServer.get('/images/card-ks.jpg', function (req, res) {
+  res.type('image/jpg');
+  res.sendFile(__dirname + '/images/card-ks.jpg');
 });
 
 // Start HTTP Server.

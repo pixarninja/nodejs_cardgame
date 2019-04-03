@@ -4,9 +4,580 @@
     border: 1px solid white !important;
     width: 100%;
     height: 230px;
-    background-image: url("images/card.jpg");
+    background-image: url("images/card-blank.jpg");
     background-size: 100% 100%;
     position: relative;
     top: 34px;
 }
-
+#card-1c {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-1c.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-2c {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-2c.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-3c {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-3c.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-4c {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-4c.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-5c {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-5c.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-6c {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-6c.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-7c {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-7c.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-8c {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-8c.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-9c {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-9c.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-10c {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-10c.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-jc {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-jc.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-qc {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-qc.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-kc {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-kc.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-1d {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-1d.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-2d {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-2d.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#3d {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/3d.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-4d {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-4d.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-5d {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-5d.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-6d {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-6d.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-7d {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-7d.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-8d {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-8d.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-9d {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-9d.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-10d {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-10d.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-jd {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-jd.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-qd {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-qd.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-kd {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-kd.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-1h {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-1h.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-2h {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-2h.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#3h {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/3h.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-4h {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-4h.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-5h {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-5h.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-6h {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-6h.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-7h {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-7h.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-8h {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-8h.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-9h {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-9h.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-10h {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-10h.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-jh {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-jh.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-qh {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-qh.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-kh {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-kh.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-1s {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-1s.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-2s {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-2s.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#3s {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/3s.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-4s {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-4s.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-5s {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-5s.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-6s {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-6s.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-7s {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-7s.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-8s {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-8s.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-9s {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-9s.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-10s {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-10s.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-js {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-js.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-qs {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-qs.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}
+#card-ks {
+    cursor: move;
+    border-radius: 5%;
+    border: 1px solid white !important;
+    width: 100%;
+    height: 230px;
+    background-image: url('images/card-ks.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    top: 34px;
+}

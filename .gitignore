@@ -2,3 +2,5 @@
 build*
 dist*
 nbproject*
+name_generator
+output.txt
