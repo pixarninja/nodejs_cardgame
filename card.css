@@ -174,13 +174,13 @@
     position: relative;
     top: 34px;
 }
-#3d {
+#card-3d {
     cursor: move;
     border-radius: 5%;
     border: 1px solid white !important;
     width: 100%;
     height: 230px;
-    background-image: url('images/3d.jpg');
+    background-image: url('images/card-3d.jpg');
     background-size: 100% 100%;
     position: relative;
     top: 34px;
@@ -317,13 +317,13 @@
     position: relative;
     top: 34px;
 }
-#3h {
+#card-3h {
     cursor: move;
     border-radius: 5%;
     border: 1px solid white !important;
     width: 100%;
     height: 230px;
-    background-image: url('images/3h.jpg');
+    background-image: url('images/card-3h.jpg');
     background-size: 100% 100%;
     position: relative;
     top: 34px;
@@ -460,13 +460,13 @@
     position: relative;
     top: 34px;
 }
-#3s {
+#card-3s {
     cursor: move;
     border-radius: 5%;
     border: 1px solid white !important;
     width: 100%;
     height: 230px;
-    background-image: url('images/3s.jpg');
+    background-image: url('images/card-3s.jpg');
     background-size: 100% 100%;
     position: relative;
     top: 34px;

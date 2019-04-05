@@ -9,9 +9,9 @@ $(function () {
   var status = $("#status");
   var fieldSelect = $("#field-select")[0];
   var deck = [ "card-1c", "card-2c",  "card-3c", "card-4c", "card-5c", "card-6c", "card-7c", "card-8c", "card-9c", "card-10c", "card-jc", "card-qc", "card-kc",
-      "card-1d", "card-2d",  "3d", "card-4d", "card-5d", "card-6d", "card-7d", "card-8d", "card-9d", "card-10d", "card-jd", "card-qd", "card-kd",
-      "card-1h", "card-2h",  "3h", "card-4h", "card-5h", "card-6h", "card-7h", "card-8h", "card-9h", "card-10h", "card-jh", "card-qh", "card-kh",
-      "card-1s", "card-2s",  "3s", "card-4s", "card-5s", "card-6s", "card-7s", "card-8s", "card-9s", "card-10s", "card-js", "card-qs", "card-ks"];
+      "card-1d", "card-2d",  "card-3d", "card-4d", "card-5d", "card-6d", "card-7d", "card-8d", "card-9d", "card-10d", "card-jd", "card-qd", "card-kd",
+      "card-1h", "card-2h",  "card-3h", "card-4h", "card-5h", "card-6h", "card-7h", "card-8h", "card-9h", "card-10h", "card-jh", "card-qh", "card-kh",
+      "card-1s", "card-2s",  "card-3s", "card-4s", "card-5s", "card-6s", "card-7s", "card-8s", "card-9s", "card-10s", "card-js", "card-qs", "card-ks"];
   deck.sort(function(a,b) { return Math.random() > 0.5; } );
   var drawIndex = 0;
   var drawCount = 52;
@@ -342,7 +342,6 @@ $(function () {
     // Find the first empty hand slot and add the card.
     var found = false;
     var handContainers = $("div[id*='hand']");
-    console.log(handContainers);
     for(var container of handContainers) {
       if(!container.firstChild) {
         container.appendChild(newCard);
@@ -368,7 +367,6 @@ $(function () {
         if(child != null) {
           var entry = {};
           if(container.id == "discard") {
-            discardCount++;
             entry['count'] = discardCount;
           }
           else if(container.id == "draw") {
@@ -394,7 +392,7 @@ $(function () {
       var message = {};
       if(!this.id.includes("hand")) {
         message['position'] = this.id.replace("-", " ").replace("slot", "Mat Slot");
-        message['cardName'] = this.childNodes[0].id;
+        message['cardName'] = deck[52 - drawCount + 1];
       }
       else {
         message['position'] = this.id.replace("-", " ").replace("hand", "Hand Slot");
@@ -443,13 +441,16 @@ $(function () {
    * Provide dragstart callback.
    */
   function dragstart(e) {
-    card = document.getElementById(e.target.parentNode.id);
+    card = document.getElementById(e.target.id);
+    console.log(card.id);
+    card = card.parentNode;
   }
 
   /*
    * Provide dragend callback.
    */
   function dragend(e) {
+    card = null;
     if(e.target.parentNode.parentNode.parentNode.id == "container-parent") {
       e.target.parentNode.parentNode.parentNode.style.background = "";
     }
@@ -471,8 +472,8 @@ $(function () {
     var parentNode = card.parentNode;
 
     // Clear all descendents of card's parent.
-    while(parentNode.firstChild) {
-      parentNode.removeChild(parentNode.firstChild);
+    while(this.firstChild) {
+      this.removeChild(this.firstChild);
     }
 
     // Append the card node as new child.
@@ -482,13 +483,16 @@ $(function () {
       // Store field data as JSON
       var field = {};
       var child;
+      console.log(parentNode.id);
       for(var container of containers) {
         // Process child (the card image parent).
         child = container.childNodes[0];
         if(child != null) {
           var entry = {};
           if(container.id == "discard") {
-            discardCount++;
+            if(this.id == "discard") {
+              discardCount++;
+            }
             entry['count'] = discardCount;
           }
           else if(container.id == "draw") {
@@ -504,12 +508,13 @@ $(function () {
         }
       }
       fields[userName] = field;
+      console.log(field);
 
       // Send updated JSON through WebSocket.
       var message = {};
       if(!this.id.includes("hand")) {
         message['position'] = this.id.replace("-", " ").replace("slot", "Mat Slot");
-        message['cardName'] = this.childNodes[0].id;
+        message['cardName'] = parseCardName(this.childNodes[0].childNodes[0].id);
       }
       else {
         message['position'] = this.id.replace("-", " ").replace("hand", "Hand Slot");
@@ -524,11 +529,36 @@ $(function () {
     }
   }
 
+  function parseCardName(cardName) {
+    if(cardName == "card-1c") {
+      return "\"Ace of Clubs\"";
+    }
+    if(cardName == "card-1d") {
+      return "\"Ace of Diamonds\"";
+    }
+    if(cardName == "card-1h") {
+      return "\"Ace of Hearts\"";
+    }
+    if(cardName == "card-1s") {
+      return "\"Ace of Spades\"";
+    }
+    return cardName.replace("card-", "\"")
+                   .replace("c", " of Club")
+                   .replace("d", " of Diamond")
+                   .replace("h", " of Heart")
+                   .replace("s", " of Spade")
+                   .replace("k", "King")
+                   .replace("j", "Jack")
+                   .replace("q", "Queen")
+                   + "s\"";
+  }
+
   /*
    * Load field information to screen
    * @param player, the indexed player for the field that should be loaded.
    */
   function loadField(player) {
+    var field = fields[player];
     for(var container of containers) {
       // Reset draw and discard counts.
       if(container.id == "discard") {
@@ -576,7 +606,6 @@ $(function () {
         container.addEventListener("drop", drop);
       }
 
-      var field = fields[player];
       if(field != null && field[container.id] != null) {
         // Clear all descendents of card's parent.
         while(container.firstChild) {
@@ -596,7 +625,12 @@ $(function () {
 
         // Create child for image.
         var img = document.createElement("img");
-        img.setAttribute("id", field[container.id]['id']);
+        if(player != userName && container.id.includes("hand")) {
+          img.setAttribute("id", "card-blank");
+        }
+        else {
+          img.setAttribute("id", field[container.id]['id']);
+        }
         img.setAttribute("src", "");
 
         // Build tree.

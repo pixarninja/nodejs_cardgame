@@ -311,11 +311,27 @@ wsServer.on('request', function(request) {
 
         if(json.cardName != null && json.position != null) {
           // Update history list.
-          var obj = {
-            time: (new Date()).getTime(),
-            text: userName + " dropped card " + json.cardName + " at " + json.position,
-            author: "Server",
-          };
+          if(json.position.includes("draw")) {
+            var obj = {
+              time: (new Date()).getTime(),
+              text: userName + " drew a card.",
+              author: "Server",
+            };
+          }
+          else if(json.position.includes("discard")) {
+            var obj = {
+              time: (new Date()).getTime(),
+              text: userName + " discarded card " + json.cardName + ".",
+              author: "Server",
+            };
+          }
+          else {
+            var obj = {
+              time: (new Date()).getTime(),
+              text: userName + " dropped card " + json.cardName + " at " + json.position + ".",
+              author: "Server",
+            };
+          }
           history.push(obj);
           history = history.slice(-100);
 
