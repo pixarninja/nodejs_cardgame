@@ -125,9 +125,9 @@ httpServer.get('/images/card-2d.jpg', function (req, res) {
   res.type('image/jpg');
   res.sendFile(__dirname + '/images/card-2d.jpg');
 });
-httpServer.get('/images/3d.jpg', function (req, res) {
+httpServer.get('/images/card-3d.jpg', function (req, res) {
   res.type('image/jpg');
-  res.sendFile(__dirname + '/images/3d.jpg');
+  res.sendFile(__dirname + '/images/card-3d.jpg');
 });
 httpServer.get('/images/card-4d.jpg', function (req, res) {
   res.type('image/jpg');
@@ -177,9 +177,9 @@ httpServer.get('/images/card-2h.jpg', function (req, res) {
   res.type('image/jpg');
   res.sendFile(__dirname + '/images/card-2h.jpg');
 });
-httpServer.get('/images/3h.jpg', function (req, res) {
+httpServer.get('/images/card-3h.jpg', function (req, res) {
   res.type('image/jpg');
-  res.sendFile(__dirname + '/images/3h.jpg');
+  res.sendFile(__dirname + '/images/card-3h.jpg');
 });
 httpServer.get('/images/card-4h.jpg', function (req, res) {
   res.type('image/jpg');
@@ -229,9 +229,9 @@ httpServer.get('/images/card-2s.jpg', function (req, res) {
   res.type('image/jpg');
   res.sendFile(__dirname + '/images/card-2s.jpg');
 });
-httpServer.get('/images/3s.jpg', function (req, res) {
+httpServer.get('/images/card-3s.jpg', function (req, res) {
   res.type('image/jpg');
-  res.sendFile(__dirname + '/images/3s.jpg');
+  res.sendFile(__dirname + '/images/card-3s.jpg');
 });
 httpServer.get('/images/card-4s.jpg', function (req, res) {
   res.type('image/jpg');
@@ -321,14 +321,14 @@ wsServer.on('request', function(request) {
           else if(json.position.includes("discard")) {
             var obj = {
               time: (new Date()).getTime(),
-              text: userName + " discarded card " + json.cardName + ".",
+              text: userName + " discarded " + json.cardName + ".",
               author: "Server",
             };
           }
           else {
             var obj = {
               time: (new Date()).getTime(),
-              text: userName + " dropped card " + json.cardName + " at " + json.position + ".",
+              text: userName + " dropped " + json.cardName + " at " + json.position + ".",
               author: "Server",
             };
           }

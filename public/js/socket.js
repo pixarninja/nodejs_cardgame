@@ -320,90 +320,171 @@ $(function () {
    * Provide click callback for draw pile.
    */
   function click() {
-    // If there is no card to draw, return without changing anything.
-    if(document.getElementById("draw").childNodes[0] == null) {
-      return;
-    }
-
-    // Create base card div.
-    var newCard = document.createElement("div");
-    newCard.setAttribute("class", "card");
-    newCard.setAttribute("id", "card");
-    newCard.setAttribute("draggable", "true");
-
-    // Create child for image.
-    var img = document.createElement("img");
-    img.setAttribute("id", deck[52 - drawCount]);
-    img.setAttribute("src", "");
-
-    // Build tree.
-    newCard.appendChild(img);
-
-    // Find the first empty hand slot and add the card.
-    var found = false;
-    var handContainers = $("div[id*='hand']");
-    for(var container of handContainers) {
-      if(!container.firstChild) {
-        container.appendChild(newCard);
-        found = true;
-        break;
+    console.log(this.id);
+    if(this.id == "draw") {
+      // If there is no card to draw, return without changing anything.
+      if(document.getElementById("draw").childNodes[0] == null) {
+        return;
       }
-    }
 
-    // If no spot exists, return without changing anything.
-    if(!found) {
-      return;
-    }
+      // Create base card div.
+      var newCard = document.createElement("div");
+      newCard.setAttribute("class", "card");
+      newCard.setAttribute("id", "card");
+      newCard.setAttribute("draggable", "true");
 
-    drawCount -= 1;
+      // Create child for image.
+      var img = document.createElement("img");
+      img.setAttribute("id", deck[52 - drawCount]);
+      img.setAttribute("src", "");
 
-    try{
-      // Store field data as JSON
-      var field = {};
-      var child;
-      for(var container of containers) {
-        // Process child (the card image parent).
-        child = container.childNodes[0];
-        if(child != null) {
-          var entry = {};
-          if(container.id == "discard") {
-            entry['count'] = discardCount;
-          }
-          else if(container.id == "draw") {
-            if(drawCount < 0) {
-              entry['count'] = 0;
-            }
-            else {
-              entry['count'] = drawCount;
-            }
-          }
+      // Build tree.
+      newCard.appendChild(img);
 
-          // Process grandchild (the card image).
-          child = child.childNodes[0];
-          if(child != null) {
-            entry['id'] = child.id;
-            field[container.id] = entry;
-          }
+      // Find the first empty hand slot and add the card.
+      var found = false;
+      var handContainers = $("div[id*='hand']");
+      for(var container of handContainers) {
+        if(!container.firstChild) {
+          container.appendChild(newCard);
+          found = true;
+          break;
         }
       }
-      fields[userName] = field;
 
-      // Send updated JSON through WebSocket.
-      var message = {};
-      if(!this.id.includes("hand")) {
-        message['position'] = this.id.replace("-", " ").replace("slot", "Mat Slot");
-        message['cardName'] = deck[52 - drawCount + 1];
+      // If no spot exists, return without changing anything.
+      if(!found) {
+        return;
       }
-      else {
-        message['position'] = this.id.replace("-", " ").replace("hand", "Hand Slot");
-        message['cardName'] = "card-blank";
-      }
-      message['field'] = field;
-      message['player'] = userName;
 
-      connection.send(JSON.stringify(message));
-    } catch(e) {
-      console.log('Error: ' + e);
+      drawCount -= 1;
+
+      try{
+        // Store field data as JSON
+        var field = {};
+        var child;
+        for(var container of containers) {
+          // Process child (the card image parent).
+          child = container.childNodes[0];
+          if(child != null) {
+            var entry = {};
+            if(container.id == "discard") {
+              entry['count'] = discardCount;
+            }
+            else if(container.id == "draw") {
+              if(drawCount < 0) {
+                entry['count'] = 0;
+              }
+              else {
+                entry['count'] = drawCount;
+              }
+            }
+
+            // Process grandchild (the card image).
+            child = child.childNodes[0];
+            if(child != null) {
+              entry['id'] = child.id;
+              field[container.id] = entry;
+            }
+          }
+        }
+        fields[userName] = field;
+
+        // Send updated JSON through WebSocket.
+        var message = {};
+        if(!this.id.includes("hand")) {
+          message['position'] = this.id.replace("-", " ").replace("slot", "Mat Slot");
+          message['cardName'] = deck[52 - drawCount + 1];
+        }
+        else {
+          message['position'] = this.id.replace("-", " ").replace("hand", "Hand Slot");
+          message['cardName'] = "card-blank";
+        }
+        message['field'] = field;
+        message['player'] = userName;
+
+        connection.send(JSON.stringify(message));
+      } catch(e) {
+        console.log('Error: ' + e);
+      }
+    }
+    // Discard the card.
+    else if(this.id != "discard") {
+      // If there is no card to discard, return without changing anything.
+      if(this.childNodes[0] == null) {
+        return;
+      }
+      card = this.childNodes[0];
+
+      // Create base card div.
+      var newCard = document.createElement("div");
+      newCard.setAttribute("class", "card");
+      newCard.setAttribute("id", "card");
+      newCard.setAttribute("draggable", "true");
+
+      // Create child for image.
+      var img = document.createElement("img");
+      img.setAttribute("id", card.childNodes[0].id);
+      img.setAttribute("src", "");
+
+      // Build tree.
+      newCard.appendChild(img);
+
+      // Discard the card.
+      var discardContainer = document.getElementById("discard");
+
+      // Clear all descendents of card's parent.
+      while(discardContainer.firstChild) {
+        discardContainer.removeChild(discardContainer.firstChild);
+      }
+
+      // Clear all descendents of slot.
+      while(this.firstChild) {
+        this.removeChild(this.firstChild);
+      }
+
+      // Append card.
+      discardContainer.appendChild(newCard);
+      discardCount += 1;
+      console.log("Appended card!");
+
+      try{
+        // Store field data as JSON
+        var field = {};
+        var child;
+        for(var container of containers) {
+          // Process child (the card image parent).
+          child = container.childNodes[0];
+          if(child != null) {
+            var entry = {};
+            if(container.id == "discard") {
+              entry['count'] = discardCount;
+            }
+            else if(container.id == "draw") {
+              entry['count'] = drawCount;
+            }
+
+            // Process grandchild (the card image).
+            child = child.childNodes[0];
+            if(child != null) {
+              entry['id'] = child.id;
+              field[container.id] = entry;
+            }
+          }
+        }
+        fields[userName] = field;
+
+        // Send updated JSON through WebSocket.
+        var message = {};
+        message['position'] = "discard";
+        message['cardName'] = parseCardName(card.childNodes[0].id);
+        message['field'] = field;
+        message['player'] = userName;
+
+        connection.send(JSON.stringify(message));
+      } catch(e) {
+        console.log('Error: ' + e);
+      }
     }
   }
 
@@ -518,7 +599,7 @@ $(function () {
       }
       else {
         message['position'] = this.id.replace("-", " ").replace("hand", "Hand Slot");
-        message['cardName'] = "card-blank";
+        message['cardName'] = parseCardName("");
       }
       message['field'] = field;
       message['player'] = userName;
@@ -530,6 +611,9 @@ $(function () {
   }
 
   function parseCardName(cardName) {
+    if(cardName == "") {
+      return "a card";
+    }
     if(cardName == "card-1c") {
       return "\"Ace of Clubs\"";
     }
@@ -596,8 +680,8 @@ $(function () {
         container.removeEventListener("dragend", dragend);
         container.removeEventListener("drop", drop);
       }
-      else { // All except click.
-        container.removeEventListener("click", click);
+      else { // All.
+        container.addEventListener("click", click);
         container.addEventListener("dragover", dragover);
         container.addEventListener("dragenter", dragenter);
         container.addEventListener("dragleave", dragleave);
