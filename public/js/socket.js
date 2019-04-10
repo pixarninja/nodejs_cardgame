@@ -20,7 +20,9 @@ $(function () {
   // IP address of the server.
   var serverIP = "54.174.152.202";
   // Port of the socket.
-  var socketPort = "1337";
+  var port = document.getElementById("port");
+  console.log("Port: " + port.className);
+  var socketPort = port.className;
   // Name flag and username sent.
   var myName = false;
   var userName = "Unknown";
