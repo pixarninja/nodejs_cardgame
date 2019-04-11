@@ -20,9 +20,15 @@ $(function () {
   // IP address of the server.
   var serverIP = "54.174.152.202";
   // Port of the socket.
-  var port = document.getElementById("port");
-  console.log("Port: " + port.className);
-  var socketPort = port.className;
+  var socketPort = 1337;
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      socketPort = xhttp.responseText;
+    }
+  };
+  xhttp.open("GET", "http://" + serverIP + "/socket.dat", false);
+  xhttp.send();
   // Name flag and username sent.
   var myName = false;
   var userName = "Unknown";
@@ -50,6 +56,7 @@ $(function () {
 
   // Open the connection to the server.
   var connection = new WebSocket("ws://" + serverIP + ":" + socketPort);
+  console.log("Set port: " + socketPort);
 
   // Add static listeners.
   fieldSelect.addEventListener("change", changeFieldOptions);
