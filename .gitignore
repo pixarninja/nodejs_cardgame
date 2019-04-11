@@ -1,6 +1,8 @@
 *.zip
 build*
 dist*
-nbproject*
 name_generator
+nbproject*
+node_modules/
+.node*
 output.txt
