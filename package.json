@@ -1,14 +1,21 @@
 {
-    "name": "NodeJSCardGame",
-    "version": "1.0.0",
-    "keywords": [
-        "util",
-        "functional",
-        "server",
-        "client",
-        "browser"
-    ],
-    "author": "Wesley",
-    "contributors": [],
-    "dependencies": {}
+  "name": "nodejs_cardgame",
+  "version": "1.0.0",
+  "description": "NodeJS Card Game: single-instance",
+  "keywords": [
+      "util",
+      "functional",
+      "server",
+      "client",
+      "browser"
+  ],
+  "author": "Wesley Harris <wharris2@uccs.edu>",
+  "main": "server.js",
+  "scripts": {
+    "start": "sudo node server.js"
+  },
+  "dependencies": {
+    "express": "^4.16.1",
+    "websocket": "^1.0.28"
+  }
 }
