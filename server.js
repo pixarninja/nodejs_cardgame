@@ -5,7 +5,7 @@ process.title = "node-cardgame";
 
 // Port where we'll run the websocket server.
 var httpServerPort = 8000;
-var socketServerPort = 1337;
+var socketServerPort = 9000;
 
 // Websocket and http servers.
 var webSocketServer = require("websocket").server;
