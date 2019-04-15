@@ -9,6 +9,7 @@ services:
       - app
     ports:
       - "80:80"
+      - "9000:9000"
 
   app:
     build: .

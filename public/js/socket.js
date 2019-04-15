@@ -27,6 +27,8 @@ $(function () {
       socketPort = xhttp.responseText;
     }
   };
+  xhttp.open("GET", "http://" + serverIP + "/socket.dat", false);
+  xhttp.send();
   // Name flag and username sent.
   var myName = false;
   var userName = "Unknown";
@@ -53,7 +55,8 @@ $(function () {
   }
 
   // Open the connection to the server.
-  var connection = new WebSocket("ws://" + serverIP + ":" + socketPort);
+  //var connection = new WebSocket("ws://" + serverIP + ":" + socketPort);
+  var connection = new WebSocket("ws://" + serverIP + "/" + socketPort);
   console.log("Set port: " + socketPort);
 
   // Add static listeners.

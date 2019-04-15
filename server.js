@@ -308,7 +308,8 @@ function setupWebSocket() {
     console.log((new Date()) + " Socket Server is listening on port " + socketServerPort);
   }).on('error', console.log);;
   var wsServer = new webSocketServer({
-    httpServer: socketServer
+    httpServer: socketServer,
+    path: "/ws"
   });
 
   // WebSocket callback.

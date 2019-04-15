@@ -1,4 +1,5 @@
-FROM mhart/alpine-node:latest
+#FROM mhart/alpine-node:latest
+FROM node:latest
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -8,11 +9,10 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
-# Bundle app source
-#COPY . /usr/src/app/
-
 # Install using npm
 RUN npm install
+RUN apt update
+RUN apt install -y vim
 
 # Run the node server on startup
 CMD [ "node", "server.js" ]
