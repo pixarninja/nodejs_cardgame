@@ -8,15 +8,11 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
+# Bundle app source
+#COPY . /usr/src/app/
+
 # Install using npm
 RUN npm install
-
-# Bundle app source
-COPY . .
-
-# Expose ports 8000 to 9000, 8000 will be mapped to port 80 when run
-EXPOSE 1337
-EXPOSE 8000-9000
 
 # Run the node server on startup
 CMD [ "node", "server.js" ]

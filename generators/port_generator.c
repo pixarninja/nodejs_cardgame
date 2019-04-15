@@ -3,8 +3,8 @@
 
 int main(void) {
     int i;
-    for(i = 0; i < 10; i++) {
-        printf("     - \"%d:%d\"\n", 8001 + i, 8001 + i);
+    for(i = 1; i <= 10; i++) {
+        printf("     - \"%d:%d\"\n", 8000 + i * 100, 8000 + i * 100);
     }
     return 0;
 }
