@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    volumes:
+     - ./:/usr/src/app/
+    ports:
+      - "80:80"
+      - "1337:1337"
+
+  test:
+    build: testing/
+    volumes:
+     - ./testing:/usr/src/test/
+    depends_on:
+     - app
