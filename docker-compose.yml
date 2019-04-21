@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 
 services:
   app:
@@ -12,6 +12,6 @@ services:
   test:
     build: testing/
     volumes:
-     - ./testing:/usr/src/test/
+     - ./testing:/usr/src/testing/
     depends_on:
      - app

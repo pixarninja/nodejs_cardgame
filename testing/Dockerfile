@@ -1,12 +1,11 @@
-# Use the production image as base image
-FROM python:latest
+# Alpine Linux with OpenJDK JRE
+FROM openjdk:8-jre-alpine
 
-# Create test directory
-WORKDIR /usr/src/test
+# Set working directory
+WORKDIR /usr/src/testing
 
-# Install the Fake UserAgent module
-RUN pip install fake-useragent && \
-    pip install requests
+# copy WAR into image
+COPY spring-boot-app-0.0.1-SNAPSHOT.war /java_tests.war 
 
-# Run the python tests
-CMD ["python", "python_tests.py"]
+# run application with this command line 
+CMD ["/usr/bin/java", "-jar", "-Dspring.profiles.active=default", "/java_tests.war"]
