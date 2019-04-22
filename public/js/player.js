@@ -259,6 +259,11 @@ $(function () {
       input.attr("disabled", "disabled");
     }
   });
+  input.submit(function(e) {
+    // Send the message as text.
+    connection.send($(this).val());
+    $(this).val("");
+  });
 
   /* 
    * Notify user if a connection is unable to be made within 3 seconds.
