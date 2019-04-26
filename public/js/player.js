@@ -20,7 +20,7 @@ $(function () {
   // IP address of the server.
   var serverIP = "54.174.152.202";
   // Port of the socket.
-  var socketPort = "1337";
+  var socketPort = "9000";
   // Name flag and username sent.
   var myName = false;
   var userName = "Unknown";
@@ -874,7 +874,7 @@ $(function () {
 
   // Simulate 1000 events every .1 seconds.
   window.setInterval(function(){
-    if(eventCount < 500) {
+    if(eventCount < 200) {
       simulateRandomEvent();
     }
   }, 100);
