@@ -27,7 +27,7 @@ $(function () {
       socketPort = xhttp.responseText;
     }
   };
-  xhttp.open("GET", "http://" + serverIP + "/socket.xml", false);
+  xhttp.open("GET", "http://" + serverIP + "/socket.dat", false);
   xhttp.send();
   // Name flag and username sent.
   var myName = false;

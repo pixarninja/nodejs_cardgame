@@ -32,8 +32,8 @@ httpServer.get('/', function(req, res){
     socketServerPort = req.query.port;
     console.log("Set port: " + req.query.port);
 
-    // Update socket.xml file with port.
-    fs.writeFile("public/socket.xml", socketServerPort, (err) => {
+    // Update socket.dat file with port.
+    fs.writeFile("public/socket.dat", socketServerPort, (err) => {
       if (err) console.log(err);
       console.log("Successfully Written to File.");
     });
@@ -46,7 +46,7 @@ httpServer.get('/', function(req, res){
     socketServerPort = 9000;
 
     // Update socket.dat file with port.
-    fs.writeFile("public/socket.xml", socketServerPort, (err) => {
+    fs.writeFile("public/socket.dat", socketServerPort, (err) => {
       if (err) console.log(err);
       console.log("Successfully Written to File.");
     });
