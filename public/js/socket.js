@@ -20,14 +20,14 @@ $(function () {
   // IP address of the server.
   var serverIP = "54.174.152.202";
   // Port of the socket.
-  var socketPort = 1337;
+  var socketPort = 9000;
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       socketPort = xhttp.responseText;
     }
   };
-  xhttp.open("GET", "http://" + serverIP + "/socket.dat", false);
+  xhttp.open("GET", "http://" + serverIP + "/socket.xml", false);
   xhttp.send();
   // Name flag and username sent.
   var myName = false;

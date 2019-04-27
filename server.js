@@ -14,7 +14,7 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 // Host and websocket servers variables.
 var httpServerPort = 80;
-var socketServerPort = 1337;
+var socketServerPort = 9000;
 var serverIP = "54.174.152.202";
 
 // HTTP Server Express implementation.
@@ -32,8 +32,8 @@ httpServer.get('/', function(req, res){
     socketServerPort = req.query.port;
     console.log("Set port: " + req.query.port);
 
-    // Update socket.dat file with port.
-    fs.writeFile("public/socket.dat", socketServerPort, (err) => {
+    // Update socket.xml file with port.
+    fs.writeFile("public/socket.xml", socketServerPort, (err) => {
       if (err) console.log(err);
       console.log("Successfully Written to File.");
     });
@@ -43,10 +43,10 @@ httpServer.get('/', function(req, res){
   }
   // Select socket server port.
   else {
-    socketServerPort = 1337;
+    socketServerPort = 9000;
 
     // Update socket.dat file with port.
-    fs.writeFile("public/socket.dat", socketServerPort, (err) => {
+    fs.writeFile("public/socket.xml", socketServerPort, (err) => {
       if (err) console.log(err);
       console.log("Successfully Written to File.");
     });
