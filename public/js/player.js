@@ -21,6 +21,14 @@ $(function () {
   var serverIP = "54.174.152.202";
   // Port of the socket.
   var socketPort = "9000";
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      socketPort = xhttp.responseText;
+    }
+  };
+  xhttp.open("GET", "http://" + serverIP + "/socket.dat", false);
+  xhttp.send();
   // Name flag and username sent.
   var myName = false;
   var userName = "Unknown";
@@ -914,29 +922,32 @@ $(function () {
     }
   }
 
-  // Simulate a random event every .1 seconds.
-  var refreshId = window.setInterval(function(){
-    if((!timing && eventCount <= 200) || bufferCount > 10) {
-      timing = true;
-      bufferCount = 0;
-      let date = new Date();
-      startTime = date.getTime();
-      simulateRandomEvent();
-    }
-    if(eventCount > 200) {
-      clearInterval(refreshId);
+  // Wait 10 seconds for all users to connect.
+  setTimeout(function() {
+    // Simulate a random event every .1 seconds.
+    var refreshId = window.setInterval(function(){
+      if((!timing && eventCount <= 200) || bufferCount > 10) {
+        timing = true;
+        bufferCount = 0;
+        let date = new Date();
+        startTime = date.getTime();
+        simulateRandomEvent();
+      }
+      if(eventCount > 200) {
+        clearInterval(refreshId);
 
-      // Write all latency ouputs.
-      var stats = 'Total Events Captured: ' + timedCount + '\n' +
-                'Total Latency: ' + totalLatency + '\n' +
-                'Average Latency: ' + (totalLatency / timedCount) + '\n' +
-                'Lowest Latency: ' + lowestLatency + ' (' + lowestLatencyType + ')\n' +
-                'Highest Latency: ' + highestLatency + ' (' + highestLatencyType + ')';
+        // Write all latency ouputs.
+        var stats = 'Total Events Captured: ' + timedCount + '\n' +
+                  'Total Latency: ' + totalLatency + '\n' +
+                  'Average Latency: ' + (totalLatency / timedCount) + '\n' +
+                  'Lowest Latency: ' + lowestLatency + ' (' + lowestLatencyType + ')\n' +
+                  'Highest Latency: ' + highestLatency + ' (' + highestLatencyType + ')';
 
-      var message = {};
-      message['latency'] = { 'stats': stats, 'outputs': latencyOutputs };
-      connection.send(JSON.stringify(message));
-    }
-    bufferCount += 1;
-  }, 100);
+        var message = {};
+        message['latency'] = { 'stats': stats, 'outputs': latencyOutputs };
+        connection.send(JSON.stringify(message));
+      }
+      bufferCount += 1;
+    }, 100);
+  }, 10000);
 });
