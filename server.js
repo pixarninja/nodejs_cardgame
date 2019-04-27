@@ -334,7 +334,7 @@ function setupWebSocket() {
           // Test if the json is latency information.
           if(json.latency != null) {
             // Store latency information as a file.
-            fs.writeFile("public/tests/docker/" + request + userName + "_outputs.dat", json.latency.outputs, (err) => {
+            fs.writeFile("public/tests/docker/" + userName + "_outputs.dat", json.latency.outputs, (err) => {
               if (err) console.log(err);
               console.log("'" + userName + "_outputs.dat' Successfully Written to File.");
             });
@@ -393,11 +393,8 @@ function setupWebSocket() {
           if (userName == null) {
             // Store username
             numUsers++;
-            userName = order + socketServerPort + "User" + numUsers;
-            order += 1;
-            if(order > 5) {
-              order = 1;
-            }
+            userName = order + "-" + socketServerPort + "User" + numUsers;
+            order++;
             console.log((new Date()) + ' User is known as: ' + userName);
 
             // Update history list.

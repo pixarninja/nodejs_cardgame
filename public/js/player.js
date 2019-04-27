@@ -42,6 +42,18 @@ $(function () {
   var fields = [];
   // Event counter for player simulation.
   var eventCount = 1;
+  // Timing variables.
+  var bufferCount = 1;
+  var timedCount = 1;
+  var timing = false;
+  var startTime = 0;
+  var totalLatency = 0;
+  var latency;
+  var latencyOutputs = "";
+  var lowestLatency = -1;
+  var highestLatency = -1;
+  var lowestLatencyType = "";
+  var highestLatencyType = "";
 
   // Setup WebSocket.
   window.WebSocket = window.WebSocket || window.MozWebSocket;
@@ -59,7 +71,6 @@ $(function () {
   // Open the connection to the server.
   //var connection = new WebSocket("ws://" + serverIP + ":" + socketPort);
   var connection = new WebSocket("ws://" + serverIP + "/" + socketPort);
-  console.log("Set port: " + socketPort);
 
   // Add static listeners.
   fieldSelect.addEventListener("change", changeFieldOptions);
@@ -116,8 +127,6 @@ $(function () {
         userName = message;
         initializeNewField(userName);
         loadField(userName);
-        console.log("Loaded Field:");
-        console.log(fields[userName]);
         fieldSelect.selectedIndex = 0;
         myName = true;
 
@@ -140,7 +149,6 @@ $(function () {
             initializeNewField(player);
 
             // Send player's field data to the joined player.
-            console.log("Sending field!");
             message = JSON.stringify({ field: fields[userName], player: userName });
             connection.send(message);
 
@@ -161,7 +169,30 @@ $(function () {
 
     // Update to a field.
     else if (json.type === "field") {
-      console.log(json.data.field)
+      if(userName == json.data.player && timing) {
+        let date = new Date();
+        latency = date.getTime() - startTime;
+        totalLatency += latency;
+        timing = false;
+        timedCount += 1;
+        if(latencyOutputs == "") {
+          latencyOutputs += latency;
+          lowestLatency = latency;
+          highestLatency = latency;
+        }
+        else {
+          latencyOutputs += '\n' + latency;
+          if(lowestLatency > latency) {
+            lowestLatency = latency;
+            lowestLatencyType = "Field Update"
+          }
+          if(highestLatency < latency) {
+            highestLatency = latency;
+            highestLatencyType = "Field Update"
+          }
+        }
+      }
+
       configureField(json.data.player, json.data.field);
 
       // Load the field to the screen if it's currently being viewed.
@@ -178,6 +209,30 @@ $(function () {
     else if (json.type === "message") {
       // Don't write messages that are name assignments.
       if(!json.data.text.includes("My name is")) {
+        if(userName == json.data.author && timing) {
+          let date = new Date();
+          latency = date.getTime() - startTime;
+          totalLatency += latency;
+          timing = false;
+          timedCount += 1;
+          if(latencyOutputs == "") {
+            latencyOutputs += latency;
+            lowestLatency = latency;
+            highestLatency = latency;
+          }
+          else {
+            latencyOutputs += '\n' + latency;
+            if(lowestLatency > latency) {
+              lowestLatency = latency;
+              lowestLatencyType = "Message"
+            }
+            if(highestLatency < latency) {
+              highestLatency = latency;
+              highestLatencyType = "Message"
+            }
+          }
+        }
+
         message = prepareMessage(json.data.author, json.data.text, new Date(json.data.time));
         stackMessage(message);
         status.text("");
@@ -203,7 +258,6 @@ $(function () {
         var text = json.data[i].text;
         if(text.includes(" changed their name to ")) {
           var filteredName = text.replace("<span style='color: #758fff'><b>", "").replace("</b></span>: ", "").replace("<b><em>", "").replace("</em></b>", "").replace(/^\s+|\s+$/g, "").replace("Server", "");
-          console.log("Filtered name: " + filteredName);
           var parsedName = filteredName.split(" changed their name to ");
           var newName = parsedName[parsedName.length - 1];
           var oldName = parsedName[0];
@@ -337,7 +391,6 @@ $(function () {
    * Provide click callback for draw pile.
    */
   function click() {
-    console.log(this.id);
     if(this.id == "draw") {
       // If there is no card to draw, return without changing anything.
       if(document.getElementById("draw").childNodes[0] == null) {
@@ -421,6 +474,7 @@ $(function () {
         message['player'] = userName;
 
         connection.send(JSON.stringify(message));
+        eventCount += 1;
       } catch(e) {
         console.log('Error: ' + e);
       }
@@ -463,7 +517,6 @@ $(function () {
       // Append card.
       discardContainer.appendChild(newCard);
       discardCount += 1;
-      console.log("Appended card!");
 
       try{
         // Store field data as JSON
@@ -499,6 +552,7 @@ $(function () {
         message['player'] = userName;
 
         connection.send(JSON.stringify(message));
+        eventCount += 1;
       } catch(e) {
         console.log('Error: ' + e);
       }
@@ -540,7 +594,6 @@ $(function () {
    */
   function dragstart(e) {
     card = document.getElementById(e.target.id);
-    console.log(card.id);
     card = card.parentNode;
   }
 
@@ -581,7 +634,6 @@ $(function () {
       // Store field data as JSON
       var field = {};
       var child;
-      console.log(parentNode.id);
       for(var container of containers) {
         // Process child (the card image parent).
         child = container.childNodes[0];
@@ -606,7 +658,6 @@ $(function () {
         }
       }
       fields[userName] = field;
-      console.log(field);
 
       // Send updated JSON through WebSocket.
       var message = {};
@@ -622,6 +673,7 @@ $(function () {
       message['player'] = userName;
 
       connection.send(JSON.stringify(message));
+      eventCount += 1;
     } catch(e) {
       console.log('Error: ' + e);
     }
@@ -773,7 +825,6 @@ $(function () {
     }
     
     fields[player] = field;
-    console.log(fields);
   }
 
   /*
@@ -842,7 +893,6 @@ $(function () {
       // Simulate typing message.
       $('#input-field-bar').val('This is Event ' + eventCount + '!');
       $('#input-field-bar').submit();
-      console.log('Simulated message!');
       eventCount += 1;
     }
     else {
@@ -850,7 +900,6 @@ $(function () {
       if(random <= 0.33) {
         // Simulate click on draw.
         $('#draw').click();
-        console.log('Simulated click on #draw!');
       }
       else if(random <= 0.67) {
         // Simulate click on hand slot.
@@ -863,28 +912,40 @@ $(function () {
         if(random > 6) {
           // Simulate click on draw.
           $('#draw').click();
-          console.log('Simulated click on #draw!');
-        }
-        else {
-          console.log('Simulated click on #hand-' + random + '!');
         }
       }
       else {
         // Simulate typing message.
         $('#input-field-bar').val('This is Event ' + eventCount + '!');
         $('#input-field-bar').submit();
-        console.log('Simulated message!');
         eventCount += 1;
       }
     }
   }
 
-  // Simulate 1000 events every .1 seconds.
-  setTimeout(function(){
-    window.setInterval(function(){
-      if(eventCount < 500) {
-        simulateRandomEvent();
-      }
-    }, 100);
-  }, 1000);
+  // Simulate a random event every .1 seconds.
+  var refreshId = window.setInterval(function(){
+    if((!timing && eventCount <= 200) || bufferCount > 10) {
+      timing = true;
+      bufferCount = 0;
+      let date = new Date();
+      startTime = date.getTime();
+      simulateRandomEvent();
+    }
+    if(eventCount > 200) {
+      clearInterval(refreshId);
+
+      // Write all latency ouputs.
+      var stats = 'Total Events Captured: ' + timedCount + '\n' +
+                'Total Latency: ' + totalLatency + '\n' +
+                'Average Latency: ' + (totalLatency / timedCount) + '\n' +
+                'Lowest Latency: ' + lowestLatency + ' (' + lowestLatencyType + ')\n' +
+                'Highest Latency: ' + highestLatency + ' (' + highestLatencyType + ')';
+
+      var message = {};
+      message['latency'] = { 'stats': stats, 'outputs': latencyOutputs };
+      connection.send(JSON.stringify(message));
+    }
+    bufferCount += 1;
+  }, 100);
 });
