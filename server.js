@@ -32,8 +32,8 @@ httpServer.get('/', function(req, res){
     socketServerPort = req.query.port;
     console.log("Set port: " + req.query.port);
 
-    // Update socket.xml file with port.
-    fs.writeFile("public/socket.xml", socketServerPort, (err) => {
+    // Update socket.dat file with port.
+    fs.writeFile("public/socket.dat", socketServerPort, (err) => {
       if (err) console.log(err);
       console.log("Successfully Written to File.");
     });
@@ -46,7 +46,7 @@ httpServer.get('/', function(req, res){
     socketServerPort = 9000;
 
     // Update socket.dat file with port.
-    fs.writeFile("public/socket.xml", socketServerPort, (err) => {
+    fs.writeFile("public/socket.dat", socketServerPort, (err) => {
       if (err) console.log(err);
       console.log("Successfully Written to File.");
     });
@@ -330,6 +330,20 @@ function setupWebSocket() {
         try {
           var json = JSON.parse(message.utf8Data);
 
+          // Test if the json is latency information.
+          if(json.latency != null) {
+            // Store latency information as a file.
+            fs.writeFile("public/tests/multiple/" + userName + "_outputs.dat", json.latency.outputs, (err) => {
+              if (err) console.log(err);
+              console.log("'" + userName + "_outputs.dat' Successfully Written to File.");
+            });
+            fs.writeFile("public/tests/multiple/" + userName + "_stats.dat", json.latency.stats, (err) => {
+              if (err) console.log(err);
+              console.log("'" + userName + "_stats.dat' Successfully Written to File.");
+            });
+            return;
+          }
+
           if(json.cardName != null && json.position != null) {
             // Update history list.
             if(json.position.includes("draw")) {
@@ -378,7 +392,7 @@ function setupWebSocket() {
           if (userName == null) {
             // Store username
             numUsers++;
-            userName = "User" + numUsers;
+            userName = socketServerPort + "User" + numUsers;
             console.log((new Date()) + ' User is known as: ' + userName);
 
             // Update history list.
