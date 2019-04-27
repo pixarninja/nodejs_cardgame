@@ -16,6 +16,7 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var httpServerPort = 80;
 var socketServerPort = 9000;
 var serverIP = "54.174.152.202";
+var order = 1;
 
 // HTTP Server Express implementation.
 var httpServer = express();
@@ -28,7 +29,7 @@ httpServer.use(express.static(path.join(process.env.PWD, 'public')));
 httpServer.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
   // Use port in request, if within range.
-  if(req.query.port != null && req.query.port > 8000 && req.query.port < 9000 && ((req.query.port / 100) & 1)) {
+  if(req.query.port != null && req.query.port > 8000 && req.query.port < 9000) {
     socketServerPort = req.query.port;
     console.log("Set port: " + req.query.port);
 
@@ -308,8 +309,7 @@ function setupWebSocket() {
     console.log((new Date()) + " Socket Server is listening on port " + socketServerPort);
   }).on('error', console.log);;
   var wsServer = new webSocketServer({
-    httpServer: socketServer,
-    path: "/ws"
+    httpServer: socketServer
   });
 
   // WebSocket callback.
@@ -330,6 +330,20 @@ function setupWebSocket() {
         // Attempt to parse as JSON.
         try {
           var json = JSON.parse(message.utf8Data);
+
+          // Test if the json is latency information.
+          if(json.latency != null) {
+            // Store latency information as a file.
+            fs.writeFile("public/tests/docker/" + request + userName + "_outputs.dat", json.latency.outputs, (err) => {
+              if (err) console.log(err);
+              console.log("'" + userName + "_outputs.dat' Successfully Written to File.");
+            });
+            fs.writeFile("public/tests/docker/" + userName + "_stats.dat", json.latency.stats, (err) => {
+              if (err) console.log(err);
+              console.log("'" + userName + "_stats.dat' Successfully Written to File.");
+            });
+            return;
+          }
 
           if(json.cardName != null && json.position != null) {
             // Update history list.
@@ -379,7 +393,11 @@ function setupWebSocket() {
           if (userName == null) {
             // Store username
             numUsers++;
-            userName = "User" + numUsers;
+            userName = order + socketServerPort + "User" + numUsers;
+            order += 1;
+            if(order > 5) {
+              order = 1;
+            }
             console.log((new Date()) + ' User is known as: ' + userName);
 
             // Update history list.
