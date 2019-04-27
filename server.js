@@ -309,6 +309,20 @@ wsServer.on('request', function(request) {
       try {
         var json = JSON.parse(message.utf8Data);
 
+        // Test if the json is latency information.
+        if(json.latency != null) {
+          // Store latency information as a file.
+          fs.writeFile("public/tests/single/outputs.dat", json.latency.outputs, (err) => {
+            if (err) console.log(err);
+            console.log("'outputs.dat' Successfully Written to File.");
+          });
+          fs.writeFile("public/tests/single/stats.dat", json.latency.stats, (err) => {
+            if (err) console.log(err);
+            console.log("'stats.dat' Successfully Written to File.");
+          });
+          return;
+        }
+
         if(json.cardName != null && json.position != null) {
           // Update history list.
           if(json.position.includes("draw")) {
