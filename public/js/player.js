@@ -899,7 +899,19 @@ $(function () {
       var random = Math.random();
       if(random <= 0.33) {
         // Simulate click on draw.
-        $('#draw').click();
+        for(random = 1; random < 7; random++) {
+          if(document.getElementById('hand-' + random).childNodes[0] == null) {
+            break;
+          }
+        }
+        if(random <= 6) {
+          // Simulate click on draw.
+          $('#draw').click();
+        }
+        else {
+          // Simulate click on hand slot.
+          $('#hand-1').click();
+        }
       }
       else if(random <= 0.67) {
         // Simulate click on hand slot.
@@ -925,14 +937,14 @@ $(function () {
 
   // Simulate a random event every .1 seconds.
   var refreshId = window.setInterval(function(){
-    if((!timing && eventCount <= 200) || bufferCount > 10) {
+    if((!timing && eventCount <= 100) || bufferCount > 10) {
       timing = true;
       bufferCount = 0;
       let date = new Date();
       startTime = date.getTime();
       simulateRandomEvent();
     }
-    if(eventCount > 200) {
+    if(eventCount > 100) {
       clearInterval(refreshId);
 
       // Write all latency ouputs.
