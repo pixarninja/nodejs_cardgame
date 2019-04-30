@@ -312,13 +312,13 @@ wsServer.on('request', function(request) {
         // Test if the json is latency information.
         if(json.latency != null) {
           // Store latency information as a file.
-          fs.writeFile("public/tests/single/outputs.dat", json.latency.outputs, (err) => {
+          fs.writeFile("public/tests/single/" + userName + "_outputs.dat", json.latency.outputs, (err) => {
             if (err) console.log(err);
-            console.log("'outputs.dat' Successfully Written to File.");
+            console.log("'" + userName + "_outputs.dat' Successfully Written to File.");
           });
-          fs.writeFile("public/tests/single/stats.dat", json.latency.stats, (err) => {
+          fs.writeFile("public/tests/single/" + userName + "_stats.dat", json.latency.stats, (err) => {
             if (err) console.log(err);
-            console.log("'stats.dat' Successfully Written to File.");
+            console.log("'" + userName + "_stats.dat' Successfully Written to File.");
           });
           return;
         }

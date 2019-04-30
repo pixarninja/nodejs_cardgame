@@ -883,7 +883,18 @@ $(function () {
       var random = Math.random();
       if(random <= 0.33) {
         // Simulate click on draw.
-        $('#draw').click();
+        for(random = 1; random < 7; random++) {
+          if(document.getElementById('hand-' + random).childNodes[0] == null) {
+            break;
+          }
+        }
+        if(random <= 6) {
+          $('#draw').click();
+        }
+        else {
+          // Simulate click on hand slot.
+          $('#hand-1').click();
+        }
       }
       else if(random <= 0.67) {
         // Simulate click on hand slot.
