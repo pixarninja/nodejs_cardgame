@@ -920,7 +920,7 @@ $(function () {
 
   // Simulate a random event every .1 seconds.
   var refreshId = window.setInterval(function(){
-    if((!timing && eventCount <= 200) || bufferCount > 10) {
+    if((!timing && eventCount <= 100) || bufferCount > 10) {
       timing = true;
       bufferCount = 0;
       let date = new Date();

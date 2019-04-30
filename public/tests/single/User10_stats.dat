@@ -1,0 +1,5 @@
+Total Events Captured: 92
+Total Latency: 158034
+Average Latency: 1717.7608695652175
+Lowest Latency: 4 (Field Update)
+Highest Latency: 6651 (Field Update)
