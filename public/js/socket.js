@@ -18,7 +18,7 @@ $(function () {
   var discardCount = 0;
 
   // IP address of the server.
-  var serverIP = "54.174.152.202";
+  var serverIP = "wharris2-multi-socket.myuccs.net";
   // Port of the socket.
   var socketPort = 9000;
   var xhttp = new XMLHttpRequest();
