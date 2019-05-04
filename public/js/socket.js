@@ -18,7 +18,7 @@ $(function () {
   var discardCount = 0;
 
   // IP address of the server.
-  var serverIP = "3.210.67.250";
+  var serverIP = "wharris2-docker.myuccs.net";
   // Port of the socket.
   var socketPort = 9000;
   var xhttp = new XMLHttpRequest();

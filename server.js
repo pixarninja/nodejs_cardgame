@@ -15,7 +15,7 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 // Host and websocket servers variables.
 var httpServerPort = 80;
 var socketServerPort = 9000;
-var serverIP = "3.210.67.250";
+var serverIP = "wharris2-docker.myuccs.net";
 
 // HTTP Server Express implementation.
 var httpServer = express();
